@@ -31,11 +31,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage((message) => {
-      switch (message.command) {
-        case 'alert':
-          vscode.window.showErrorMessage(message.text);
-          return;
-      }
+      vscode.window.showInformationMessage(message);
     });
 
     // store reference

@@ -11,7 +11,7 @@ const App = () => {
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
     setAction(message);
-    vscode.postMessage('sendback');
+    vscode.postMessage(`from UI: ${message}`);
   };
 
   useEffect(() => {
