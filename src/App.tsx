@@ -3,12 +3,15 @@ import './App.css';
 
 import logo from './logo.png';
 
+const vscode = acquireVsCodeApi();
+
 const App = () => {
   const [action, setAction] = useState();
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
     setAction(message);
+    vscode.postMessage('sendback');
   };
 
   useEffect(() => {
