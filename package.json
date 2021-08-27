@@ -1,9 +1,10 @@
 {
 	"name": "cosmwasm",
 	"displayName": "VsCode CosmWasm",
-	"description": "",
-	"version": "1.1.5",
-	"publisher": "seunlanlege",
+	"description": "CosmWasm build & optimize and simulate",
+	"icon": "logo-128.png",
+	"version": "0.13.1",
+	"publisher": "oraichain",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/oraichain/vscode-cosmwasm.git"
