@@ -1,8 +1,9 @@
 export interface RunButton {
-	cwd?: string
-	command: string
-	vsCommand: string
-	singleInstance?: boolean
-	name: string
-	color: string
+  cwd?: string;
+  command: string;
+  vsCommand: string;
+  singleInstance?: boolean;
+  id: string;
+  name: string;
+  color: string;
 }

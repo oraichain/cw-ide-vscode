@@ -1,13 +1,25 @@
 import * as vscode from 'vscode';
 import { RunButton } from './types';
+import * as fs from 'fs';
 import * as path from 'path';
 
-export const getCargoText = async () => {
+const getPackagePath = (relativeFile: string): string => {
+  let packagePath = path.dirname(relativeFile);
+  while (packagePath && packagePath !== '.') {
+    if (fs.existsSync(`${packagePath}/Cargo.toml`)) break;
+    packagePath = path.dirname(packagePath);
+  }
+  return packagePath;
+};
+
+export const getWasmFile = async (packagePath: string): Promise<string> => {
   try {
     const text = await vscode.workspace.fs
-      .readFile(vscode.Uri.parse(`${vscode.workspace.rootPath}/Cargo.toml`))
+      .readFile(vscode.Uri.parse(`${packagePath}/Cargo.toml`))
       .then((buffer) => buffer.toString());
-    return text;
+    return `${packagePath}/artifacts/${
+      text.match(/name\s*=\s*"(.*?)"/)?.[1]
+    }.wasm`;
   } catch {
     return '';
   }
@@ -17,62 +29,77 @@ const disposables = [];
 
 const init = async (context: vscode.ExtensionContext) => {
   disposables.forEach((d) => d.dispose());
-  const text = await getCargoText();
-  const matched = text.match(/name\s*=\s*"(.*?)"/);
-  if (!matched) {
-    return;
+
+  if (!vscode.workspace.workspaceFolders) {
+    return vscode.window.showErrorMessage(
+      'Working folder not found, open a folder an try again'
+    );
   }
-  const buildName = matched[1];
+
+  const rootPath = vscode.workspace.workspaceFolders[0].uri;
+
+  // not a cargo project
+  if (!fs.existsSync(`${rootPath.path}/Cargo.toml`)) return;
+
+  const configuration = vscode.workspace.getConfiguration('cosmwasm');
+
+  const buildTool = configuration.get<string>('tool.build');
+  const simulateTool = configuration.get<string>('tool.simulate');
 
   const config = {
-    defaultColor: '#ffffff',
     commands: [
       {
-        name: 'Build',
+        id: 'build',
+        name: '$(wrench) Build CosmWasm',
         color: '#ffffff',
         singleInstance: true,
-        command: 'cargo run ${workspaceFolder}'
+        command: `${buildTool} \${packagePath}`
       },
       {
-        name: 'Simulate',
+        id: 'simulate',
+        name: '$(vm) Simulate CosmWasm',
         color: '#ffffff',
-        command: `cosmwasm-simulate \${workspaceFolder}/artifacts/${buildName}.wasm`
+        singleInstance: true,
+        command: `${simulateTool} \${wasmFile}`
       }
     ]
   };
-  const defaultColor = config.defaultColor;
-  const commands = config.commands as RunButton[];
 
-  console.log(commands);
+  const commands = config.commands as RunButton[];
 
   if (commands.length) {
     const terminals: { [name: string]: vscode.Terminal } = {};
     commands.forEach(
-      ({ cwd, command, name, color, singleInstance }: RunButton) => {
-        const vsCommand = `extension.${name.replace(' ', '')}`;
-
+      ({ cwd, command, name, color, singleInstance, id }: RunButton) => {
+        const vsCommand = `extension.${id}`;
         const disposable = vscode.commands.registerCommand(
           vsCommand,
           async () => {
+            const file = vscode.window.activeTextEditor
+              ? vscode.window.activeTextEditor.document.fileName
+              : null;
+            const packagePath = getPackagePath(file);
+            const wasmFile = await getWasmFile(packagePath);
+
             const vars = {
               // - the path of the folder opened in VS Code
-              workspaceFolder: vscode.workspace.rootPath,
+              workspaceFolder: rootPath.path,
 
               // - the name of the folder opened in VS Code without any slashes (/)
-              workspaceFolderBasename: vscode.workspace.rootPath
-                ? path.basename(vscode.workspace.rootPath)
+              workspaceFolderBasename: rootPath.path
+                ? path.basename(rootPath.path)
                 : null,
 
               // - the current opened file
-              file: vscode.window.activeTextEditor
-                ? vscode.window.activeTextEditor.document.fileName
-                : null,
+              file,
+              packagePath,
+              wasmFile,
 
               // - the current opened file relative to workspaceFolder
               relativeFile:
-                vscode.window.activeTextEditor && vscode.workspace.rootPath
+                vscode.window.activeTextEditor && rootPath.path
                   ? path.relative(
-                      vscode.workspace.rootPath,
+                      rootPath.path,
                       vscode.window.activeTextEditor.document.fileName
                     )
                   : null,
@@ -108,7 +135,7 @@ const init = async (context: vscode.ExtensionContext) => {
                 : null,
 
               // - the task runner's current working directory on startup
-              cwd: cwd || vscode.workspace.rootPath || require('os').homedir(),
+              cwd: cwd || rootPath.path || require('os').homedir(),
 
               //- the current selected line number in the active file
               lineNumber: vscode.window.activeTextEditor
@@ -160,17 +187,13 @@ const init = async (context: vscode.ExtensionContext) => {
         disposables.push(disposable);
 
         loadButton({
+          id,
           vsCommand,
           command,
           name,
-          color: color || defaultColor
+          color
         });
       }
-    );
-  } else {
-    vscode.window.setStatusBarMessage(
-      'VsCode Action Buttons: You have no run commands.',
-      4000
     );
   }
 };
@@ -187,8 +210,8 @@ function loadButton({ command, name, color, vsCommand }: RunButton) {
 }
 
 function interpolateString(tpl: string, data: object): string {
-  let re = /\$\{([^\}]+)\}/g,
-    match;
+  let re = /\$\{([^\}]+)\}/g;
+  let match = null;
   while ((match = re.exec(tpl))) {
     let path = match[1].split('.').reverse();
     let obj = data[path.pop()];

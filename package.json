@@ -1,12 +1,12 @@
 {
-	"name": "action-buttons",
-	"displayName": "VsCode Action Buttons",
+	"name": "cosmwasm",
+	"displayName": "VsCode CosmWasm",
 	"description": "",
 	"version": "1.1.5",
 	"publisher": "seunlanlege",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/SeunLanLege/vscode-action-buttons.git"
+		"url": "https://github.com/oraichain/vscode-cosmwasm.git"
 	},
 	"engines": {
 		"vscode": "^1.53.0"
@@ -19,61 +19,18 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
-		"commands": [
-			{
-				"command": "extension.refreshButtons",
-				"title": "Refresh Action Buttons"
-			}
-		],
 		"configuration": {
-			"type": "object",
-			"title": "VsCode Action Buttons",
+			"title": "CosmWasm Configuration",
 			"properties": {
-				"actionButtons": {
-					"type": "object",
-					"properties": {
-						"commands": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"cwd": {
-										"type": "string",
-										"required": false
-									},
-									"command": {
-										"type": "string",
-										"required": true
-									},
-									"singleInstance": {
-										"type": "boolean"
-									},
-									"name": {
-										"type": "string"
-									},
-									"color": {
-										"type": "string",
-										"required": false
-									}
-								}
-							}
-						},
-						"defaultColor": {
-							"type": "string",
-							"required": false
-						},
-						"reloadButton": {
-							"type": [
-								"string",
-								"null"
-							],
-							"required": false
-						},
-						"loadNpmCommands": {
-							"type": "boolean",
-							"required": false
-						}
-					}
+				"cosmwasm.tool.build": {
+					"type": "string",
+					"default": "cosmwasm-optimize",
+					"description": "Build & optimize cosmwasm contract into wasm file"
+				},
+				"cosmwasm.tool.simulate": {
+					"type": "string",
+					"default": "cosmwasm-simulate",
+					"description": "Simulate the wasm file"
 				}
 			}
 		}
