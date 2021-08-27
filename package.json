@@ -1,53 +1,89 @@
 {
-	"name": "cosmwasm",
-	"displayName": "VsCode CosmWasm",
-	"description": "CosmWasm build & optimize and simulate",
-	"icon": "logo-128.png",
-	"version": "0.13.1",
-	"publisher": "oraichain",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/oraichain/vscode-cosmwasm.git"
-	},
-	"engines": {
-		"vscode": "^1.53.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"configuration": {
-			"title": "CosmWasm Configuration",
-			"properties": {
-				"cosmwasm.tool.build": {
-					"type": "string",
-					"default": "cosmwasm-optimize",
-					"description": "Build & optimize cosmwasm contract into wasm file"
-				},
-				"cosmwasm.tool.simulate": {
-					"type": "string",
-					"default": "cosmwasm-simulate",
-					"description": "Simulate the wasm file"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -watch -p ./",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/mocha": "^9.0.0",
-		"@types/node": "^12.12.0",
-		"mocha": "^9.1.0",
-		"typescript": "^4.3.5",
-		"@types/vscode": "^1.53.0"
-	}
+  "name": "cosmwasm",
+  "displayName": "VsCode CosmWasm",
+  "description": "CosmWasm build & optimize and simulate",
+  "icon": "logo-128.png",
+  "version": "0.13.2",
+  "publisher": "oraichain",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oraichain/vscode-cosmwasm.git"
+  },
+  "engines": {
+    "vscode": "^1.53.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/ext-src/extension",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "cosmwasm.interactView",
+          "name": "CosmWasm Interaction"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CosmWasm Configuration",
+      "properties": {
+        "cosmwasm.tool.build": {
+          "type": "string",
+          "default": "cosmwasm-optimize",
+          "description": "Build & optimize cosmwasm contract into wasm file"
+        },
+        "cosmwasm.tool.simulate": {
+          "type": "string",
+          "default": "cosmwasm-simulate",
+          "description": "Simulate the wasm file"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p tsconfig.extension.json",
+    "lint": "eslint . --ext .ts,.tsx",
+    "watch": "tsc -watch -p tsconfig.extension.json",
+    "test": "node ./node_modules/vscode/bin/test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build-ext": "tsc -p tsconfig.extension.json"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^12.12.0",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "@types/vscode": "^1.53.0",
+    "mocha": "^9.1.0",
+    "react-scripts": "^4.0.3",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
