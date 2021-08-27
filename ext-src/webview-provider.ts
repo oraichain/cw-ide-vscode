@@ -7,9 +7,11 @@ import * as path from 'path';
 export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'cosmwasm.interactView';
   private _buildPath: vscode.Uri;
+  private _isDev: boolean;
   private _view?: vscode.WebviewView;
-  constructor(extensionUri: vscode.Uri) {
-    this._buildPath = vscode.Uri.joinPath(extensionUri, 'build');
+  constructor(context: vscode.ExtensionContext) {
+    this._isDev = context.extensionMode === vscode.ExtensionMode.Development;
+    this._buildPath = vscode.Uri.joinPath(context.extensionUri, 'build');
   }
 
   public resolveWebviewView(
@@ -25,7 +27,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     };
 
     // Set the webview's initial html content
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    this._getHtmlForWebview(webviewView.webview);
 
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage((message) => {
@@ -40,35 +42,55 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
-    const { entrypoints } = require(path.join(
-      this._buildPath.path,
-      'asset-manifest.json'
-    ));
-    // Use a nonce to whitelist which scripts can be run
-    const nonce = getNonce();
-    let jsList = '';
-    let cssList = '';
+  private async _getHtmlForWebview(webview: vscode.Webview) {
+    // fixed development
+    const entrypoints = this._isDev
+      ? [
+          './static/js/bundle.js',
+          './static/js/vendors~main.chunk.js',
+          './static/js/main.chunk.js'
+        ]
+      : (
+          require(path.join(this._buildPath.path, 'asset-manifest.json'))
+            .entrypoints as string[]
+        ).map(
+          (entrypoint) =>
+            webview.asWebviewUri(
+              vscode.Uri.joinPath(this._buildPath, entrypoint)
+            ).path
+        );
 
-    for (const entrypoint of entrypoints as string[]) {
-      const resource = webview.asWebviewUri(
-        vscode.Uri.joinPath(this._buildPath, entrypoint)
-      );
+    // Use a nonce to whitelist which scripts can be run
+    const nonce = this._isDev ? '' : getNonce();
+    let jsList = '';
+    // get localhost:port from env if development
+    let cssList = this._isDev
+      ? `<base href="http://localhost:${
+          (
+            await vscode.workspace.fs.readFile(
+              vscode.Uri.joinPath(this._buildPath, '..', '.env.development')
+            )
+          )
+            .toString()
+            .match(/(?<=[^_]PORT=)\d+/)?.[0]
+        }" />`
+      : `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src * data:; script-src 'nonce-${nonce}';">`;
+
+    for (const entrypoint of entrypoints) {
       if (entrypoint.endsWith('.css')) {
-        cssList += `<link rel="stylesheet" type="text/css" href="${resource}">`;
+        cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
       } else if (entrypoint.endsWith('.js')) {
-        jsList += `<script nonce="${nonce}" src="${resource}"></script>`;
+        jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
       }
     }
 
-    return `<!DOCTYPE html>
+    webview.html = `<!DOCTYPE html>
               <html lang="en">
               <head>                  
                   <meta charset="UTF-8">
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
-                  <title>CosmWasm Interaction</title>
-                  ${cssList}
-                  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src * data:; script-src 'nonce-${nonce}';">
+                  <title>CosmWasm Interaction</title>                                    
+                  ${cssList}                  
               </head>
               <body>                  
                   <div id="root"></div>          
