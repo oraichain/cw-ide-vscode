@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { RunButton } from './types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CosmWasmViewProvider } from './webview-provider';
 
 const getPackagePath = (relativeFile: string): string => {
   let packagePath = path.dirname(relativeFile);
@@ -27,7 +28,10 @@ export const getWasmFile = async (packagePath: string): Promise<string> => {
 
 const disposables = [];
 
-const init = async (context: vscode.ExtensionContext) => {
+const init = async (
+  context: vscode.ExtensionContext,
+  provider: CosmWasmViewProvider
+) => {
   disposables.forEach((d) => d.dispose());
 
   if (!vscode.workspace.workspaceFolders) {
@@ -153,6 +157,10 @@ const init = async (context: vscode.ExtensionContext) => {
               execPath: process.execPath
             };
 
+            // show message on web panel
+            const actionCommand = interpolateString(command, vars);
+            provider.setAction(id);
+
             const assocTerminal = terminals[vsCommand];
             if (!assocTerminal) {
               const terminal = vscode.window.createTerminal({
@@ -161,7 +169,7 @@ const init = async (context: vscode.ExtensionContext) => {
               });
               terminal.show(true);
               terminals[vsCommand] = terminal;
-              terminal.sendText(interpolateString(command, vars));
+              terminal.sendText(actionCommand);
             } else {
               if (singleInstance) {
                 delete terminals[vsCommand];
@@ -171,12 +179,12 @@ const init = async (context: vscode.ExtensionContext) => {
                   cwd: vars.cwd
                 });
                 terminal.show(true);
-                terminal.sendText(interpolateString(command, vars));
+                terminal.sendText(actionCommand);
                 terminals[vsCommand] = terminal;
               } else {
                 assocTerminal.show();
                 assocTerminal.sendText('clear');
-                assocTerminal.sendText(interpolateString(command, vars));
+                assocTerminal.sendText(actionCommand);
               }
             }
           }
@@ -201,9 +209,8 @@ const init = async (context: vscode.ExtensionContext) => {
 function loadButton({ command, name, color, vsCommand }: RunButton) {
   const runButton = vscode.window.createStatusBarItem(1, 0);
   runButton.text = name;
-  runButton.color = color || 'white';
+  runButton.color = color;
   runButton.tooltip = command;
-
   runButton.command = vsCommand;
   runButton.show();
   disposables.push(runButton);

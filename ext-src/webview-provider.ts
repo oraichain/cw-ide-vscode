@@ -42,6 +42,13 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
   }
 
+  public setAction(action: string) {
+    if (this._view) {
+      this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+      this._view.webview.postMessage(action); // can be object
+    }
+  }
+
   private async _getHtmlForWebview(webview: vscode.Webview) {
     // fixed development
     const entrypoints = this._isDev
@@ -93,8 +100,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
                   ${cssList}                  
               </head>
               <body>                  
-                  <div id="root"></div>          
-                  <h1>Hello</h1>        
+                  <div id="root"></div>                            
                   ${jsList}
               </body>
               </html>`;

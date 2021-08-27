@@ -1,22 +1,35 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 import logo from './logo.png';
 
-class App extends React.Component {
-  public render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to CosmWasm</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
+const App = () => {
+  const [action, setAction] = useState();
+  // Handle messages sent from the extension to the webview
+  const eventHandler = (event: MessageEvent) => {
+    const message = event.data; // The json data that the extension sent
+    setAction(message);
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', eventHandler);
+    return () => {
+      window.addEventListener('message', eventHandler);
+    };
+  });
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1 className="App-title">Welcome to CosmWasm Interaction</h1>
+      </header>
+      <p className="App-intro">
+        Action called: <br />
+        <code className="ellipsis">{action}</code>
+      </p>
+    </div>
+  );
+};
 
 export default App;

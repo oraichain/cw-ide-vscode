@@ -3,8 +3,6 @@ import init from './init';
 import { CosmWasmViewProvider } from './webview-provider';
 
 export function activate(context: vscode.ExtensionContext) {
-  init(context);
-
   const provider = new CosmWasmViewProvider(context);
 
   context.subscriptions.push(
@@ -13,6 +11,8 @@ export function activate(context: vscode.ExtensionContext) {
       provider
     )
   );
+
+  init(context, provider);
 }
 
 // this method is called when your extension is deactivated
