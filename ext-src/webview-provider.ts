@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 /**
  * Manages react webview panels
@@ -10,7 +11,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   private _isDev: boolean;
   private _view?: vscode.WebviewView;
   constructor(context: vscode.ExtensionContext) {
-    this._isDev = context.extensionMode === vscode.ExtensionMode.Development;
+    this._isDev = false; // context.extensionMode === vscode.ExtensionMode.Development;
     this._buildPath = vscode.Uri.joinPath(context.extensionUri, 'build');
   }
 
@@ -45,6 +46,22 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  private async _getBaseHtml(cspSource: string, nonce: string) {
+    let base = '<base href="';
+    if (this._isDev) {
+      const envText = await vscode.workspace.fs.readFile(
+        vscode.Uri.joinPath(this._buildPath, '..', '.env.development')
+      );
+      const port = envText.toString().match(/(?<=[^_]PORT=)\d+/)?.[0];
+      base += `http://localhost:${port}/" />`;
+    } else {
+      base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource}; img-src * data:; script-src 'nonce-${nonce}';">`;
+    }
+
+    return base;
+  }
+
   private async _getHtmlForWebview(webview: vscode.Webview) {
     // fixed development
     const entrypoints = this._isDev
@@ -53,31 +70,14 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
           './static/js/vendors~main.chunk.js',
           './static/js/main.chunk.js'
         ]
-      : (
-          require(path.join(this._buildPath.path, 'asset-manifest.json'))
-            .entrypoints as string[]
-        ).map(
-          (entrypoint) =>
-            webview.asWebviewUri(
-              vscode.Uri.joinPath(this._buildPath, entrypoint)
-            ).path
-        );
+      : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
+          .entrypoints as string[]);
 
     // Use a nonce to whitelist which scripts can be run
-    const nonce = this._isDev ? '' : getNonce();
+    const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
     let jsList = '';
     // get localhost:port from env if development
-    let cssList = this._isDev
-      ? `<base href="http://localhost:${
-          (
-            await vscode.workspace.fs.readFile(
-              vscode.Uri.joinPath(this._buildPath, '..', '.env.development')
-            )
-          )
-            .toString()
-            .match(/(?<=[^_]PORT=)\d+/)?.[0]
-        }" />`
-      : `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src * data:; script-src 'nonce-${nonce}';">`;
+    let cssList = await this._getBaseHtml(webview.cspSource, nonce);
 
     for (const entrypoint of entrypoints) {
       if (entrypoint.endsWith('.css')) {
@@ -88,27 +88,17 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     }
 
     webview.html = `<!DOCTYPE html>
-              <html lang="en">
-              <head>                  
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
-                  <title>CosmWasm Interaction</title>                                    
-                  ${cssList}                  
-              </head>
-              <body>                  
-                  <div id="root"></div>                            
-                  ${jsList}
-              </body>
-              </html>`;
+<html lang="en">
+<head>                  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
+    <title>CosmWasm Interaction</title>                                    
+    ${cssList}                  
+</head>
+<body>                  
+    <div id="root"></div>                            
+    ${jsList}
+</body>
+</html>`;
   }
-}
-
-function getNonce() {
-  let text = '';
-  const possible =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
 }
