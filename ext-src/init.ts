@@ -13,17 +13,10 @@ const getPackagePath = (relativeFile: string): string => {
   return packagePath;
 };
 
-export const getWasmFile = async (packagePath: string): Promise<string> => {
-  try {
-    const text = await vscode.workspace.fs
-      .readFile(vscode.Uri.parse(`${packagePath}/Cargo.toml`))
-      .then((buffer) => buffer.toString());
-    return `${packagePath}/artifacts/${
-      text.match(/name\s*=\s*"(.*?)"/)?.[1]
-    }.wasm`;
-  } catch {
-    return '';
-  }
+export const getWasmFile = (packagePath: string): string => {
+  return `${packagePath}/artifacts/${path
+    .basename(packagePath)
+    .replace(/-/g, '_')}.wasm`;
 };
 
 const disposables = [];
@@ -76,119 +69,114 @@ const init = async (
     commands.forEach(
       ({ cwd, command, name, color, singleInstance, id }: RunButton) => {
         const vsCommand = `extension.${id}`;
-        const disposable = vscode.commands.registerCommand(
-          vsCommand,
-          async () => {
-            const file = vscode.window.activeTextEditor
-              ? vscode.window.activeTextEditor.document.fileName
-              : null;
-            const packagePath = getPackagePath(file);
-            const wasmFile = await getWasmFile(packagePath);
+        const disposable = vscode.commands.registerCommand(vsCommand, () => {
+          const file = vscode.window.activeTextEditor
+            ? vscode.window.activeTextEditor.document.fileName
+            : null;
+          const packagePath = getPackagePath(file);
+          const wasmFile = getWasmFile(packagePath);
 
-            const vars = {
-              // - the path of the folder opened in VS Code
-              workspaceFolder: rootPath.path,
+          const vars = {
+            // - the path of the folder opened in VS Code
+            workspaceFolder: rootPath.path,
 
-              // - the name of the folder opened in VS Code without any slashes (/)
-              workspaceFolderBasename: rootPath.path
-                ? path.basename(rootPath.path)
-                : null,
+            // - the name of the folder opened in VS Code without any slashes (/)
+            workspaceFolderBasename: rootPath.path
+              ? path.basename(rootPath.path)
+              : null,
 
-              // - the current opened file
-              file,
-              packagePath,
-              wasmFile,
+            // - the current opened file
+            file,
+            packagePath,
+            wasmFile,
 
-              // - the current opened file relative to workspaceFolder
-              relativeFile:
-                vscode.window.activeTextEditor && rootPath.path
-                  ? path.relative(
-                      rootPath.path,
-                      vscode.window.activeTextEditor.document.fileName
-                    )
-                  : null,
-
-              // - the current opened file's basename
-              fileBasename: vscode.window.activeTextEditor
-                ? path.basename(
+            // - the current opened file relative to workspaceFolder
+            relativeFile:
+              vscode.window.activeTextEditor && rootPath.path
+                ? path.relative(
+                    rootPath.path,
                     vscode.window.activeTextEditor.document.fileName
                   )
                 : null,
 
-              // - the current opened file's basename with no file extension
-              fileBasenameNoExtension: vscode.window.activeTextEditor
-                ? path.parse(
-                    path.basename(
-                      vscode.window.activeTextEditor.document.fileName
-                    )
-                  ).name
-                : null,
+            // - the current opened file's basename
+            fileBasename: vscode.window.activeTextEditor
+              ? path.basename(vscode.window.activeTextEditor.document.fileName)
+              : null,
 
-              // - the current opened file's dirname
-              fileDirname: vscode.window.activeTextEditor
-                ? path.dirname(vscode.window.activeTextEditor.document.fileName)
-                : null,
-
-              // - the current opened file's extension
-              fileExtname: vscode.window.activeTextEditor
-                ? path.parse(
-                    path.basename(
-                      vscode.window.activeTextEditor.document.fileName
-                    )
-                  ).ext
-                : null,
-
-              // - the task runner's current working directory on startup
-              cwd: cwd || rootPath.path || require('os').homedir(),
-
-              //- the current selected line number in the active file
-              lineNumber: vscode.window.activeTextEditor
-                ? vscode.window.activeTextEditor.selection.active.line + 1
-                : null,
-
-              // - the current selected text in the active file
-              selectedText: vscode.window.activeTextEditor
-                ? vscode.window.activeTextEditor.document.getText(
-                    vscode.window.activeTextEditor.selection
+            // - the current opened file's basename with no file extension
+            fileBasenameNoExtension: vscode.window.activeTextEditor
+              ? path.parse(
+                  path.basename(
+                    vscode.window.activeTextEditor.document.fileName
                   )
-                : null,
+                ).name
+              : null,
 
-              // - the path to the running VS Code executable
-              execPath: process.execPath
-            };
+            // - the current opened file's dirname
+            fileDirname: vscode.window.activeTextEditor
+              ? path.dirname(vscode.window.activeTextEditor.document.fileName)
+              : null,
 
-            // show message on web panel
-            const actionCommand = interpolateString(command, vars);
-            provider.setAction(id);
+            // - the current opened file's extension
+            fileExtname: vscode.window.activeTextEditor
+              ? path.parse(
+                  path.basename(
+                    vscode.window.activeTextEditor.document.fileName
+                  )
+                ).ext
+              : null,
 
-            const assocTerminal = terminals[vsCommand];
-            if (!assocTerminal) {
+            // - the task runner's current working directory on startup
+            cwd: cwd || rootPath.path || require('os').homedir(),
+
+            //- the current selected line number in the active file
+            lineNumber: vscode.window.activeTextEditor
+              ? vscode.window.activeTextEditor.selection.active.line + 1
+              : null,
+
+            // - the current selected text in the active file
+            selectedText: vscode.window.activeTextEditor
+              ? vscode.window.activeTextEditor.document.getText(
+                  vscode.window.activeTextEditor.selection
+                )
+              : null,
+
+            // - the path to the running VS Code executable
+            execPath: process.execPath
+          };
+
+          // show message on web panel
+          const actionCommand = interpolateString(command, vars);
+          provider.setAction(id);
+
+          const assocTerminal = terminals[vsCommand];
+          if (!assocTerminal) {
+            const terminal = vscode.window.createTerminal({
+              name,
+              cwd: vars.cwd
+            });
+            terminal.show(true);
+            terminals[vsCommand] = terminal;
+            terminal.sendText(actionCommand);
+          } else {
+            if (singleInstance) {
+              delete terminals[vsCommand];
+              assocTerminal.dispose();
               const terminal = vscode.window.createTerminal({
                 name,
                 cwd: vars.cwd
               });
               terminal.show(true);
-              terminals[vsCommand] = terminal;
               terminal.sendText(actionCommand);
+              terminals[vsCommand] = terminal;
             } else {
-              if (singleInstance) {
-                delete terminals[vsCommand];
-                assocTerminal.dispose();
-                const terminal = vscode.window.createTerminal({
-                  name,
-                  cwd: vars.cwd
-                });
-                terminal.show(true);
-                terminal.sendText(actionCommand);
-                terminals[vsCommand] = terminal;
-              } else {
-                assocTerminal.show();
-                assocTerminal.sendText('clear');
-                assocTerminal.sendText(actionCommand);
-              }
+              assocTerminal.show();
+              assocTerminal.sendText('clear');
+              assocTerminal.sendText(actionCommand);
             }
           }
-        );
+        });
 
         context.subscriptions.push(disposable);
 
