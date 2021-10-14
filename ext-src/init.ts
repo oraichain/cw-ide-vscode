@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { execSync } from 'child_process';
 import { RunButton } from './types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -38,10 +39,18 @@ const init = async (
   // not a cargo project
   if (!fs.existsSync(`${rootPath.path}/Cargo.toml`)) return;
 
-  const configuration = vscode.workspace.getConfiguration('cosmwasm');
+  // const configuration = vscode.workspace.getConfiguration('cosmwasm');
 
   const buildTool = path.join(context.extensionPath, 'ext-src', 'optimize.sh');
-  const simulateTool = configuration.get<string>('tool.simulate');
+  const simulateTool = 'cosmwasm-simulate';
+
+  const where = process.platform === 'linux' ? 'whereis' : 'where';
+  const simulatePath = execSync(`${where} ${simulateTool}`).toString();
+  if (simulatePath.indexOf('not found') !== -1) {
+    vscode.window.showWarningMessage(
+      `Please run 'cargo install ${simulateTool}'`
+    );
+  }
 
   const config = {
     commands: [

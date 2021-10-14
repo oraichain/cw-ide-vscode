@@ -33,13 +33,7 @@
     },
     "configuration": {
       "title": "CosmWasm Configuration",
-      "properties": {
-        "cosmwasm.tool.simulate": {
-          "type": "string",
-          "default": "cosmwasm-simulate",
-          "description": "Simulate the wasm file"
-        }
-      }
+      "properties": {}
     }
   },
   "scripts": {
