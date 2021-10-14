@@ -34,10 +34,10 @@
     "configuration": {
       "title": "CosmWasm Configuration",
       "properties": {
-        "cosmwasm.tool.build": {
+        "cosmwasm.tool.simulate": {
           "type": "string",
-          "default": "cosmwasm-optimize",
-          "description": "Build & optimize cosmwasm contract into wasm file"
+          "default": "cosmwasm-simulate",
+          "description": "Simulate the wasm file"
         }
       }
     }

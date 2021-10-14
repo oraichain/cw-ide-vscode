@@ -40,8 +40,8 @@ const init = async (
 
   const configuration = vscode.workspace.getConfiguration('cosmwasm');
 
-  const buildTool = configuration.get<string>('tool.build');
-  const simulateTool = path.join(context.extensionPath, 'optimize.sh');
+  const buildTool = path.join(context.extensionPath, 'ext-src', 'optimize.sh');
+  const simulateTool = configuration.get<string>('tool.simulate');
 
   const config = {
     commands: [
