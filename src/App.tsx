@@ -3,14 +3,13 @@ import './App.css';
 
 import logo from './logo.png';
 
-const vscode = acquireVsCodeApi();
-
 const App = () => {
   const [action, setAction] = useState();
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
     setAction(message);
+    const vscode = acquireVsCodeApi();
     vscode.postMessage(`from UI: ${message}`);
   };
 
@@ -25,7 +24,7 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <h1 className="App-title">Welcome to CosmWasm Interaction</h1>
+        <h1 className="App-title">Welcome to CosmWasm IDE</h1>
       </header>
       <p className="App-intro">
         Action called: <br />

@@ -11,7 +11,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   private _isDev: boolean;
   private _view?: vscode.WebviewView;
   constructor(context: vscode.ExtensionContext) {
-    this._isDev = false; // context.extensionMode === vscode.ExtensionMode.Development;
+    this._isDev = context.extensionMode === vscode.ExtensionMode.Development;
     this._buildPath = vscode.Uri.joinPath(context.extensionUri, 'build');
   }
 
