@@ -33,18 +33,7 @@
     },
     "configuration": {
       "title": "CosmWasm Configuration",
-      "properties": {
-        "cosmwasm.tool.build": {
-          "type": "string",
-          "default": "cosmwasm-optimize",
-          "description": "Build & optimize cosmwasm contract into wasm file"
-        },
-        "cosmwasm.tool.simulate": {
-          "type": "string",
-          "default": "cosmwasm-simulate",
-          "description": "Simulate the wasm file"
-        }
-      }
+      "properties": {}
     }
   },
   "scripts": {
