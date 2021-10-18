@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-
 import logo from './logo.png';
 
 const App = () => {
@@ -54,12 +53,12 @@ const App = () => {
         Action called: <br />
         <code className="ellipsis">{action}</code>
       </p>
-      <button
+      {/* <button
         type='button'
         onClick={() => { }}
       >
         <span>Execute ping test</span>
-      </button>
+      </button> */}
     </div>
   );
 };
