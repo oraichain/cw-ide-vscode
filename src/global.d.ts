@@ -1,3 +1,8 @@
+import { BroadCastMode } from '@oraichain/cosmosjs';
+import Keplr from './lib/Keplr';
+import { Keplr as keplr } from './types/kelpr/wallet';
+import Wasm from './lib/wasm';
+
 declare global {
   type VSCode = {
     postMessage(message: any): void;
@@ -7,7 +12,41 @@ declare global {
 
   declare const vscode: VSCode;
 
+  declare var acquireVsCodeApi: any;
+
+
   function acquireVsCodeApi(): VSCode;
+
+  type ExecuteOptions = {
+    gas?: number;
+    fees?: number;
+    funds?: string;
+    memo?: string;
+    mode?: BroadCastMode;
+  };
+
+  type ExecuteKeplrOptions = {
+    accountNumber: Long | null;
+    sequence: number;
+    gas: number;
+    fees: number;
+    mode?: BroadCastMode;
+  };
+
+  type StatusCode = {
+    SUCCESS: number;
+    NOT_FOUND: number;
+    GENERIC_ERROR: number;
+  };
+
+  type keplrType = keplr;
+  interface Window {
+    Wasm: Wasm;
+    Keplr: Keplr;
+    keplr: keplr;
+  }
+
+  declare const APP_SETTINGS: Record<string, any>;
 }
 
-export {};
+export { };
