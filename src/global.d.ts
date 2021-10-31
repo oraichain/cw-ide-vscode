@@ -12,9 +12,6 @@ declare global {
 
   declare const vscode: VSCode;
 
-  declare var acquireVsCodeApi: any;
-
-
   function acquireVsCodeApi(): VSCode;
 
   type ExecuteOptions = {

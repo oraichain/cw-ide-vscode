@@ -1,26 +1,73 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-import logo from './logo.png';
+import { useEffect, useState } from "react";
+import "./App.css";
+import logo from "./logo.png";
 
 const App = () => {
   const [action, setAction] = useState();
+  const [wasmBody, setWasmBody] = useState();
+  const [mnemonic, setMnemonic] = useState("");
+  const [initInput, setInitInput] = useState("");
+  const [contractAddr, setContractAddr] = useState("");
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
+    console.log("event: ", event);
     console.log("message: ", message);
-    setAction(message);
+    setAction(message.action);
+    setWasmBody(message.payload);
     const vscode = acquireVsCodeApi();
-    vscode.postMessage(`from UI: ${message}`);
+    vscode.postMessage(`from UI: ${message.action}`);
   };
 
   useEffect(() => {
-    window.addEventListener('message', eventHandler);
+    window.addEventListener("message", eventHandler);
     return () => {
-      window.addEventListener('message', eventHandler);
+      window.removeEventListener("message", eventHandler);
     };
   });
 
-  // const onExecute = async () => {
+  const onDeploy = async () => {
+    const childKey = window.Wasm.cosmos.getChildKey(mnemonic);
+    const sender = window.Wasm.cosmos.getAddress(childKey);
+    const txBody = window.Wasm.getStoreMessage(wasmBody, sender, "");
+    // store code;
+    const res = await window.Wasm.cosmos.submit(
+      childKey,
+      txBody,
+      "BROADCAST_MODE_BLOCK",
+      0,
+      20000000
+    );
+    console.log("res: ", res);
+    // instantiate
+
+    const codeId = res.tx_response.logs[0].events[0].attributes.find(
+      (attr: any) => attr.key === "code_id"
+    ).value;
+    const input = Buffer.from(initInput).toString("base64");
+    const txBody2 = window.Wasm.getInstantiateMessage(
+      codeId,
+      input,
+      sender,
+      "demo smart contract"
+    );
+    const res2 = await window.Wasm.cosmos.submit(
+      childKey,
+      txBody2,
+      "BROADCAST_MODE_BLOCK",
+      0,
+      20000000
+    );
+
+    console.log(res2);
+
+    let address = JSON.parse(res2.tx_response.raw_log)[0].events[1]
+      .attributes[0].value;
+    console.log("contract address: ", address);
+    setContractAddr(address);
+  };
+
+  // const onExecuteKeplr = async () => {
   //   const keplr = await window.Keplr.getKeplr();
   //   if (keplr) {
   //     const { cosmos } = window.Wasm;
@@ -53,12 +100,26 @@ const App = () => {
         Action called: <br />
         <code className="ellipsis">{action}</code>
       </p>
-      {/* <button
-        type='button'
-        onClick={() => { }}
-      >
-        <span>Execute ping test</span>
-      </button> */}
+      <label>Please type mnemonic:</label>
+      <div>
+        <input
+          value={mnemonic}
+          onInput={(e: any) => setMnemonic(e.target.value)}
+        />
+      </div>
+      <label>Please type init input:</label>
+      <div>
+        <input
+          value={initInput}
+          onInput={(e: any) => setInitInput(e.target.value)}
+        />
+      </div>
+      <button type="button" onClick={onDeploy}>
+        <span>Deploy</span>
+      </button>
+      <div>
+        {contractAddr ? <label>Contract addr: {contractAddr}</label> : ""}
+      </div>
     </div>
   );
 };
