@@ -3,14 +3,18 @@ import './App.css';
 
 import logo from './logo.png';
 
+let vscode: VSCode;
+
 const App = () => {
   const [action, setAction] = useState();
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
-    console.log("message: ", message);
+    console.log('message: ', message);
     setAction(message);
-    const vscode = acquireVsCodeApi();
+    if (!vscode) {
+      vscode = acquireVsCodeApi();
+    }
     vscode.postMessage(`from UI: ${message}`);
   };
 
@@ -54,10 +58,7 @@ const App = () => {
         Action called: <br />
         <code className="ellipsis">{action}</code>
       </p>
-      <button
-        type='button'
-        onClick={() => { }}
-      >
+      <button type="button" onClick={() => {}}>
         <span>Execute ping test</span>
       </button>
     </div>

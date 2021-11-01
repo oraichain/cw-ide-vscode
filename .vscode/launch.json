@@ -10,8 +10,7 @@
             "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
             "stopOnEntry": false,
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/src/**/*.js" ],
-            "preLaunchTask": "npm"
+            "outFiles": [ "${workspaceRoot}/out/src/**/*.js" ]            
         },
         {
             "name": "Launch Tests",
