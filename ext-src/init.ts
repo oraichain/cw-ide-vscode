@@ -1,13 +1,13 @@
-import * as vscode from 'vscode';
-import { execSync } from 'child_process';
-import { RunButton } from './types';
-import * as fs from 'fs';
-import * as path from 'path';
-import { CosmWasmViewProvider } from './webview-provider';
+import * as vscode from "vscode";
+import { execSync } from "child_process";
+import { RunButton } from "./types";
+import * as fs from "fs";
+import * as path from "path";
+import { CosmWasmViewProvider } from "./webview-provider";
 
 const getPackagePath = (relativeFile: string): string => {
   let packagePath = path.dirname(relativeFile);
-  while (packagePath && packagePath !== '.') {
+  while (packagePath && packagePath !== ".") {
     if (fs.existsSync(`${packagePath}/Cargo.toml`)) break;
     packagePath = path.dirname(packagePath);
   }
@@ -17,7 +17,7 @@ const getPackagePath = (relativeFile: string): string => {
 export const getWasmFile = (packagePath: string): string => {
   return `${packagePath}/artifacts/${path
     .basename(packagePath)
-    .replace(/-/g, '_')}.wasm`;
+    .replace(/-/g, "_")}.wasm`;
 };
 
 const disposables = [];
@@ -30,7 +30,7 @@ const init = async (
 
   if (!vscode.workspace.workspaceFolders) {
     return vscode.window.showErrorMessage(
-      'Working folder not found, open a folder an try again'
+      "Working folder not found, open a folder an try again"
     );
   }
 
@@ -41,12 +41,12 @@ const init = async (
 
   // const configuration = vscode.workspace.getConfiguration('cosmwasm');
 
-  const buildTool = path.join(context.extensionPath, 'ext-src', 'optimize.sh');
-  const simulateTool = 'cosmwasm-simulate';
+  const buildTool = path.join(context.extensionPath, "ext-src", "optimize.sh");
+  const simulateTool = "cosmwasm-simulate";
 
-  const where = process.platform === 'linux' ? 'whereis' : 'where';
+  const where = process.platform === "linux" ? "whereis" : "where";
   const simulatePath = execSync(`${where} ${simulateTool}`).toString();
-  if (simulatePath.indexOf('not found') !== -1) {
+  if (simulatePath.indexOf("not found") !== -1) {
     vscode.window.showWarningMessage(
       `Please run 'cargo install ${simulateTool}'`
     );
@@ -55,20 +55,20 @@ const init = async (
   const config = {
     commands: [
       {
-        id: 'build',
-        name: '$(wrench) Build CosmWasm',
-        color: '#ffffff',
+        id: "build",
+        name: "$(wrench) Build CosmWasm",
+        color: "#ffffff",
         singleInstance: true,
-        command: `${buildTool} \${packagePath}`
+        command: `${buildTool} \${packagePath}`,
       },
       {
-        id: 'simulate',
-        name: '$(vm) Simulate CosmWasm',
-        color: '#ffffff',
+        id: "simulateeeeee",
+        name: "$(vm) Simulate CosmWasm",
+        color: "#ffffff",
         singleInstance: true,
-        command: `${simulateTool} \${wasmFile}`
-      }
-    ]
+        command: `${simulateTool} \${wasmFile}`,
+      },
+    ],
   };
 
   const commands = config.commands as RunButton[];
@@ -137,7 +137,7 @@ const init = async (
               : null,
 
             // - the task runner's current working directory on startup
-            cwd: cwd || rootPath.path || require('os').homedir(),
+            cwd: cwd || rootPath.path || require("os").homedir(),
 
             //- the current selected line number in the active file
             lineNumber: vscode.window.activeTextEditor
@@ -152,18 +152,26 @@ const init = async (
               : null,
 
             // - the path to the running VS Code executable
-            execPath: process.execPath
+            execPath: process.execPath,
           };
 
           // show message on web panel
           const actionCommand = interpolateString(command, vars);
-          provider.setAction(id);
+
+          if (id === "build") {
+            const wasmBody = fs.readFileSync(wasmFile).toString("base64");
+            // send post wasm body when build
+            provider.setActionWithPayload({ action: id, payload: wasmBody });
+          } else {
+            //Write to output.
+            provider.setActionWithPayload({ action: id, payload: null });
+          }
 
           const assocTerminal = terminals[vsCommand];
           if (!assocTerminal) {
             const terminal = vscode.window.createTerminal({
               name,
-              cwd: vars.cwd
+              cwd: vars.cwd,
             });
             terminal.show(true);
             terminals[vsCommand] = terminal;
@@ -174,14 +182,14 @@ const init = async (
               assocTerminal.dispose();
               const terminal = vscode.window.createTerminal({
                 name,
-                cwd: vars.cwd
+                cwd: vars.cwd,
               });
               terminal.show(true);
               terminal.sendText(actionCommand);
               terminals[vsCommand] = terminal;
             } else {
               assocTerminal.show();
-              assocTerminal.sendText('clear');
+              assocTerminal.sendText("clear");
               assocTerminal.sendText(actionCommand);
             }
           }
@@ -196,7 +204,7 @@ const init = async (
           vsCommand,
           command,
           name,
-          color
+          color,
         });
       }
     );
@@ -217,7 +225,7 @@ function interpolateString(tpl: string, data: object): string {
   let re = /\$\{([^\}]+)\}/g;
   let match = null;
   while ((match = re.exec(tpl))) {
-    let path = match[1].split('.').reverse();
+    let path = match[1].split(".").reverse();
     let obj = data[path.pop()];
     while (path.length) obj = obj[path.pop()];
     tpl = tpl.replace(match[0], obj);
