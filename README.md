@@ -18,3 +18,9 @@ cosmwasm-simulate is developed for Cosmwasm Smart Contract system, the main func
 This is a bash script with a locked set of dependencies to produce
 reproducible builds of cosmwasm smart contracts. It also does heavy
 optimization on the build size, using binary stripping and `wasm-opt`.
+
+## cosmwasm-vscode interface
+
+The extension provides two custom VS Code buttons: ```Build CosmWasm``` and ```Simulate Cosmwasm``` under the status bar of Vs Code. The ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code. Meanwhile, the ```Simulate Cosmwasm``` button will start a new simulate session using the contract file that is currently opened.
+
+The extension also includes a new side bar called: ```CosmWasm Interaction```, which is a React application allowing users to deploy and interact with the smart contracts through a specific Cosmos-based network using Wasmd.
