@@ -42,7 +42,10 @@
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",
-    "start": "react-scripts start",
+    "start": "env-cmd -f .env.vscode-dev react-scripts start",
+    "prod": "env-cmd -f .env.production react-scripts start",
+    "start:browser-dev": "env-cmd -f .env.browser-dev react-scripts start",
+    "start:vscode-dev": "env-cmd -f .env.vscode-dev react-scripts start",
     "build": "react-scripts build",
     "build-ext": "tsc -p tsconfig.extension.json"
   },
@@ -64,6 +67,7 @@
     "@ant-design/icons": "^4.7.0",
     "@oraichain/cosmosjs": "^0.0.73",
     "antd": "^4.16.13",
+    "env-cmd": "^10.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "sass": "^1.43.2"

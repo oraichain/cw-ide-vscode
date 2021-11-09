@@ -1,5 +1,6 @@
 import Cosmos from "@oraichain/cosmosjs";
 import { Buffer } from "buffer";
+import { BroadCastMode } from "@oraichain/cosmosjs";
 
 /** basically query and execute, with param : contract, lcd, and simulate is true or false
  */
@@ -139,6 +140,106 @@ class Wasm {
 
   encodeTxBody(txBody: any): Uint8Array {
     return message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
+  }
+
+  // a wrapper method to deploy a smart contract
+  async handleDeploy(mnemonic: any | undefined, wasmBody: any, initInput: any) {
+    console.log("mnemonic: ", mnemonic);
+    if (process.env.REACT_APP_ENV === "vscode-dev" || mnemonic) {
+      console.log("in development")
+      const childKey = this.cosmos.getChildKey(mnemonic);
+      const sender = this.cosmos.getAddress(childKey);
+      const txBody = this.getStoreMessage(wasmBody, sender, '');
+      // store code;
+      const res = await this.cosmos.submit(
+        childKey,
+        txBody,
+        'BROADCAST_MODE_BLOCK',
+        0,
+        20000000
+      );
+      console.log('res: ', res);
+      // instantiate
+
+      const codeId = res.tx_response.logs[0].events[0].attributes.find(
+        (attr: any) => attr.key === 'code_id'
+      ).value;
+      const input = Buffer.from(initInput).toString('base64');
+      const txBody2 = this.getInstantiateMessage(
+        codeId,
+        input,
+        sender,
+        'demo smart contract'
+      );
+      const res2 = await this.cosmos.submit(
+        childKey,
+        txBody2,
+        'BROADCAST_MODE_BLOCK',
+        0,
+        20000000
+      );
+
+      console.log(res2);
+      // return the contract address after successful
+      return JSON.parse(res2.tx_response.raw_log)[0].events[1]
+        .attributes[0].value;
+    } else if (process.env.REACT_APP_ENV === "production" || process.env.REACT_APP_ENV === "browser-dev") {
+      const wasmBodyTemp = process.env.REACT_APP_KEPLR_TEST ? await fetch("https://gist.githubusercontent.com/ducphamle2/be7febd2a4da0f00b942ece37709120a/raw/a775a15f1932c44972f66a0dade29a381a1cb8fa/wasm-body-example.txt").then(data => data.text()) : wasmBody;
+      const keplr = await window.Keplr.getKeplr();
+      if (keplr) {
+
+        // login
+        await window.Keplr.suggestOraichain();
+        const key = await keplr.getKey(this.cosmos.chainId);
+        const sender = key.bech32Address;
+        // demo ping
+        const txBody = window.Wasm.getStoreMessage(wasmBodyTemp, sender, "");
+
+        let { account_number, sequence } = (
+          await this.cosmos.get(`/cosmos/auth/v1beta1/accounts/${sender}`)
+        ).account;
+        const res = await window.Keplr.handleKeplr(sender, txBody, key.pubKey, {
+          accountNumber: account_number,
+          sequence,
+          gas: 20000000,
+          fees: 0,
+          mode: 'BROADCAST_MODE_BLOCK'
+        });
+        console.log("response: ", res);
+
+        // instantiate
+
+        const codeId = res.tx_response.logs[0].events[0].attributes.find(
+          (attr: any) => attr.key === "code_id"
+        ).value;
+        const input = Buffer.from(initInput).toString("base64");
+        const txBody2 = window.Wasm.getInstantiateMessage(
+          codeId,
+          input,
+          sender,
+          "demo smart contract"
+        );
+        // increment sequence
+        let newSequence = parseInt(sequence) + 1;
+
+        const res2 = await window.Keplr.handleKeplr(sender, txBody2, key.pubKey, {
+          accountNumber: account_number,
+          sequence: newSequence,
+          gas: 20000000,
+          fees: 0,
+          mode: 'BROADCAST_MODE_BLOCK'
+        });
+
+        console.log(res2);
+        return JSON.parse(res2.tx_response.raw_log)[0].events[1]
+          .attributes[0].value;
+      } else {
+        throw "You must install Keplr to continue signing this transaction";
+      }
+    } else {
+      console.log("wrong env");
+      throw "Wrong env"
+    }
   }
 }
 

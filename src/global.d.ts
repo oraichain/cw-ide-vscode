@@ -19,7 +19,7 @@ declare global {
     fees?: number;
     funds?: string;
     memo?: string;
-    mode?: BroadCastMode;
+    mode?: string;
   };
 
   type ExecuteKeplrOptions = {
@@ -27,7 +27,7 @@ declare global {
     sequence: number;
     gas: number;
     fees: number;
-    mode?: BroadCastMode;
+    mode?: string;
   };
 
   type StatusCode = {

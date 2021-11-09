@@ -1,3 +1,5 @@
+import { BroadCastMode } from "@oraichain/cosmosjs";
+
 export default class Keplr {
     public chainId: string;
     private rpc: string;
@@ -202,7 +204,7 @@ export default class Keplr {
         const signature = Buffer.from(response.signature.signature, 'base64');
         console.log('signature when signing using Keplr: ', signature);
         const txBytes = cosmos.constructTxBytes(response.signed.bodyBytes, response.signed.authInfoBytes, [signature]);
-        const res = await cosmos.broadcast(txBytes, mode);
+        const res = await cosmos.broadcast(txBytes, mode as BroadCastMode);
         console.log('response data: ', res);
         return res;
     }
