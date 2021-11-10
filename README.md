@@ -1,5 +1,14 @@
 # Welcome to CosmWasm VS Code Extension
 
+<p align="center">
+  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://gateway.ipfs.io/ipfs/QmQkiBbB3DNZAjk4Fe1fY1CAyv2xdW189yHKJZiCAKZU64" alt="CosmWasm IDE logo"></a> &nbsp
+  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://avatars.githubusercontent.com/u/69910226?s=200&v=4" alt="Oraichain logo"></a>
+</p>
+
+<h1 align="center">
+    CosmosWasm IDE - An open-source project for CosmWasm smart contract developers  
+</h1>
+
 ## cosmwasm-simulate
 
 cosmwasm-simulate is developed for Cosmwasm Smart Contract system, the main functions is:
