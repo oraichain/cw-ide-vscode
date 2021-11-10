@@ -1,8 +1,8 @@
 # Welcome to CosmWasm VS Code Extension
 
 <p align="center">
-  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://gateway.ipfs.io/ipfs/QmQkiBbB3DNZAjk4Fe1fY1CAyv2xdW189yHKJZiCAKZU64" alt="CosmWasm IDE logo"></a> &nbsp
-  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://avatars.githubusercontent.com/u/69910226?s=200&v=4" alt="Oraichain logo"></a>
+  <a target="_blank" rel="noopener noreferrer"><img width="100" src="https://raw.githubusercontent.com/oraichain/vscode-cosmwasm/docs/contributing/public/cosmos-ide.png" alt="CosmWasm IDE logo"></a> &nbsp
+  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://raw.githubusercontent.com/oraichain/vscode-cosmwasm/docs/contributing/public/logo-128.png" alt="Oraichain logo"></a>
 </p>
 
 <h1 align="center">
