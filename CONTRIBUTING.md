@@ -5,8 +5,8 @@ Welcome to the VS Code CosmWasm Extension repository. If you are reading this, w
 Below are some important resources relating to the project:
 
 * [VS Code CosmWasm development guidelines](https://github.com/InterWasm/vscode-cosmwasm/CONTRIBUTING.md/#Guidelines).
-* Reporting bugs: Please open a github issue to report bugs.
-* [Community]()
+* [Community](https://discord.gg/28z9HwZh)
+* Reporting bugs: Please open a github issue to report bugs or join the discord community to discuss problems.
 
 # Committing changes
 
