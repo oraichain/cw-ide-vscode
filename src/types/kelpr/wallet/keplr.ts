@@ -1,4 +1,4 @@
-import { ChainInfo } from "../chain-info";
+import { ChainInfo } from "@keplr-wallet/types";
 import {
   BroadcastMode,
   AminoSignResponse,

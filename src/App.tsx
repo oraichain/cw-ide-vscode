@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import Wasm from './lib/wasm';
 import logo from './logo.png';
 
 let vscode: VSCode;
@@ -8,6 +9,7 @@ const App = () => {
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
   const [mnemonic, setMnemonic] = useState('');
+  const [chainId, setChainId] = useState('');
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   // Handle messages sent from the extension to the webview
@@ -33,7 +35,8 @@ const App = () => {
   });
 
   const onDeploy = async () => {
-    let address = await window.Wasm.handleDeploy(mnemonic, wasmBody, initInput);
+    window.chainStore.setChainId(chainId);
+    let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput);
     console.log("contract address: ", address);
     setContractAddr(address);
   }
@@ -48,6 +51,15 @@ const App = () => {
         Action called: <br />
         <code className="ellipsis">{action}</code>
       </p>
+      <label>Please choose chain id:</label>
+      <div>
+        <select name="chain-id" value={chainId} onChange={event => setChainId(event.target.value)}>
+          {
+            window.chainStore.chainInfos.map(info =>
+              <option id={info.chainId} >{info.chainId}</option>
+            )}
+        </select>
+      </div>
       <label>Please type mnemonic:</label>
       <div>
         <input
