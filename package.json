@@ -2,8 +2,8 @@
   "name": "cosmwasm",
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize and simulate",
-  "icon": "logo-128.png",
-  "version": "0.13.6",
+  "icon": "public/logo-128.png",
+  "version": "0.13.7",
   "publisher": "oraichain",
   "homepage": "https://orai.io",
   "license": "MIT OR Apache-2.0",
@@ -37,7 +37,6 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "npm run build && npm run build-ext",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
