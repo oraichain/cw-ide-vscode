@@ -62,11 +62,10 @@ const init = async (
         command: `${buildTool} \${packagePath}`,
       },
       {
-        id: "simulateeeeee",
-        name: "$(vm) Simulate CosmWasm",
+        id: "deploy",
+        name: "$(vm) Deploy CosmWasm",
         color: "#ffffff",
         singleInstance: true,
-        command: `${simulateTool} \${wasmFile}`,
       },
     ],
   };
@@ -103,9 +102,9 @@ const init = async (
             relativeFile:
               vscode.window.activeTextEditor && rootPath.path
                 ? path.relative(
-                    rootPath.path,
-                    vscode.window.activeTextEditor.document.fileName
-                  )
+                  rootPath.path,
+                  vscode.window.activeTextEditor.document.fileName
+                )
                 : null,
 
             // - the current opened file's basename
@@ -116,10 +115,10 @@ const init = async (
             // - the current opened file's basename with no file extension
             fileBasenameNoExtension: vscode.window.activeTextEditor
               ? path.parse(
-                  path.basename(
-                    vscode.window.activeTextEditor.document.fileName
-                  )
-                ).name
+                path.basename(
+                  vscode.window.activeTextEditor.document.fileName
+                )
+              ).name
               : null,
 
             // - the current opened file's dirname
@@ -130,10 +129,10 @@ const init = async (
             // - the current opened file's extension
             fileExtname: vscode.window.activeTextEditor
               ? path.parse(
-                  path.basename(
-                    vscode.window.activeTextEditor.document.fileName
-                  )
-                ).ext
+                path.basename(
+                  vscode.window.activeTextEditor.document.fileName
+                )
+              ).ext
               : null,
 
             // - the task runner's current working directory on startup
@@ -147,8 +146,8 @@ const init = async (
             // - the current selected text in the active file
             selectedText: vscode.window.activeTextEditor
               ? vscode.window.activeTextEditor.document.getText(
-                  vscode.window.activeTextEditor.selection
-                )
+                vscode.window.activeTextEditor.selection
+              )
               : null,
 
             // - the path to the running VS Code executable
@@ -157,14 +156,19 @@ const init = async (
 
           // show message on web panel
           const actionCommand = interpolateString(command, vars);
-
+          const wasmBody = fs.readFileSync(wasmFile).toString("base64");
           if (id === "build") {
-            const wasmBody = fs.readFileSync(wasmFile).toString("base64");
             // send post wasm body when build
             provider.setActionWithPayload({ action: id, payload: wasmBody });
           } else {
-            //Write to output.
-            provider.setActionWithPayload({ action: id, payload: null });
+            //Deploy & execute case.
+            let mnemonic = "";
+            try {
+              mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
+            } catch (error) {
+              vscode.window.showErrorMessage("No .env file with mnemonic stored in the current workspace folder");
+            }
+            provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
           }
 
           const assocTerminal = terminals[vsCommand];

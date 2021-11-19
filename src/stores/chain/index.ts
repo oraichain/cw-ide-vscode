@@ -24,7 +24,7 @@ export class ChainStore extends BaseChainStore<ChainInfoWithExplorer> {
 
         this.chainId = embedChainInfos[0].chainId;
         this.cosmos = new Cosmos(embedChainInfos[0].rest.replace(/\/$/, ""), this.chainId);
-        this.cosmos.setBech32MainPrefix(embedChainInfos[0].stakeCurrency.coinMinimalDenom);
+        this.cosmos.setBech32MainPrefix(embedChainInfos[0].bech32Config.bech32PrefixAccAddr);
 
         makeObservable(this);
     }
@@ -54,7 +54,7 @@ export class ChainStore extends BaseChainStore<ChainInfoWithExplorer> {
             this.chainId = chainId;
             this.cosmos.chainId = chainId;
             this.cosmos.url = chainInfo.rest;
-            this.cosmos.bech32MainPrefix = chainInfo.stakeCurrency.coinMinimalDenom;
+            this.cosmos.bech32MainPrefix = chainInfo.bech32Config.bech32PrefixAccAddr;
         }
     }
 

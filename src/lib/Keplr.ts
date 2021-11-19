@@ -5,8 +5,11 @@ export default class Keplr {
 
     suggestChain = async () => {
         let { current } = window.chainStore;
-        await window.keplr.experimentalSuggestChain(current);
+        console.log("window chainstore current: ", window.chainStore.current);
+        // await window.keplr.experimentalSuggestChain(current);
+        console.log("after suggest chain");
         await window.keplr.enable(current.chainId);
+        console.log("enabled");
 
         // dont override memo & fees
         window.keplr.defaultOptions = {
@@ -19,15 +22,13 @@ export default class Keplr {
 
     async getKeplr(): Promise<keplrType | undefined> {
         if (document.readyState === 'complete' && window.keplr) {
-            if (document.readyState === 'complete') {
-                window.keplr.defaultOptions = {
-                    sign: {
-                        preferNoSetFee: true,
-                        preferNoSetMemo: true,
-                    },
-                };
-                return window.keplr;
-            }
+            window.keplr.defaultOptions = {
+                sign: {
+                    preferNoSetFee: true,
+                    preferNoSetMemo: true,
+                },
+            };
+            return window.keplr;
         }
 
         return new Promise((resolve) => {
@@ -53,6 +54,7 @@ export default class Keplr {
         let { current } = window.chainStore;
         const keplr = await this.getKeplr();
         if (keplr) {
+            console.log("keplr key: ", await keplr.getKey(current.chainId));
             return keplr.getKey(current.chainId);
         }
         return undefined;

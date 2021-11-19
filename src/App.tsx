@@ -12,13 +12,17 @@ const App = () => {
   const [chainId, setChainId] = useState('');
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
     // console.log('event: ', event);
     // console.log('message: ', message);
     setAction(message.action);
-    setWasmBody(message.payload);
+    if (message.payload) setWasmBody(message.payload);
+    if (message.mnemonic) {
+      onDeploy(message.mnemonic);
+    }
     try {
       vscode = acquireVsCodeApi();
       // vscode.postMessage(`from UI: ${message.action}`);
@@ -34,11 +38,17 @@ const App = () => {
     };
   });
 
-  const onDeploy = async () => {
+  const onDeploy = async (mnemonic: any) => {
+    setErrorMessage('');
+    console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
-    let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput);
-    console.log("contract address: ", address);
-    setContractAddr(address);
+    try {
+      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput);
+      console.log("contract address: ", address);
+      setContractAddr(address);
+    } catch (error) {
+      setErrorMessage(JSON.stringify(error));
+    }
   }
 
   return (
@@ -60,13 +70,6 @@ const App = () => {
             )}
         </select>
       </div>
-      <label>Please type mnemonic:</label>
-      <div>
-        <input
-          value={mnemonic}
-          onInput={(e: any) => setMnemonic(e.target.value)}
-        />
-      </div>
       <label>Please type init input:</label>
       <div>
         <input
@@ -74,11 +77,11 @@ const App = () => {
           onInput={(e: any) => setInitInput(e.target.value)}
         />
       </div>
-      <button type="button" onClick={onDeploy}>
-        <span>Deploy</span>
-      </button>
       <div>
         {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
+      </div>
+      <div>
+        {errorMessage ? <label>Error: {errorMessage}</label> : ''}
       </div>
     </div>
   );
