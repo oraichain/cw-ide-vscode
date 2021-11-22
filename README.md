@@ -1,5 +1,14 @@
 # Welcome to CosmWasm VS Code Extension
 
+<p align="center">
+  <a target="_blank" rel="noopener noreferrer"><img width="100" src="https://raw.githubusercontent.com/oraichain/vscode-cosmwasm/docs/contributing/public/cosmos-ide.png" alt="CosmWasm IDE logo"></a> &nbsp
+  <a href="https://orai.io" target="_blank" rel="noopener noreferrer"><img width="100" src="https://raw.githubusercontent.com/oraichain/vscode-cosmwasm/docs/contributing/public/logo-128.png" alt="Oraichain logo"></a>
+</p>
+
+<h1 align="center">
+    CosmosWasm IDE - An open-source project for CosmWasm smart contract developers  
+</h1>
+
 ## cosmwasm-simulate
 
 cosmwasm-simulate is developed for Cosmwasm Smart Contract system, the main functions is:
@@ -24,3 +33,15 @@ optimization on the build size, using binary stripping and `wasm-opt`.
 The extension provides two custom VS Code buttons: ```Build CosmWasm``` and ```Simulate Cosmwasm``` under the status bar of Vs Code. The ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code. Meanwhile, the ```Simulate Cosmwasm``` button will start a new simulate session using the contract file that is currently opened.
 
 The extension also includes a new side bar called: ```CosmWasm Interaction```, which is a React application allowing users to deploy and interact with the smart contracts through a specific Cosmos-based network using Wasmd.
+
+## Deploy to vscode marketplace
+
+```sh
+vsce publish --pat $AUTHORIZATION
+```
+
+## Deploy to Eclipse Open VSX for Gitpod
+
+```sh
+ovsx publish --pat $AUTHORIZATION
+```

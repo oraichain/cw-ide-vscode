@@ -2,22 +2,13 @@ import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import Keplr from 'src/lib/Keplr';
-import Wasm from 'src/lib/wasm';
+import { ChainStore } from './stores/chain';
+import { EmbedChainInfos } from './config';
 
-// global Wasm
-window.Wasm = new Wasm(
-    process.env.REACT_APP_LCD || "https://testnet-lcd.orai.io",
-    process.env.REACT_APP_NETWORK || "Oraichain-testnet"
-);
+window.chainStore = new ChainStore(EmbedChainInfos);
 
 // export default Keplr;
 // global Keplr
-window.Keplr = new Keplr(
-    process.env.REACT_APP_NETWORK || 'Oraichain-testnet',
-    process.env.REACT_APP_RPC_URL || 'http://testnet-rpc.orai.io',
-    process.env.REACT_APP_LCD || 'http://testnet-lcd.orai.io',
-    'ORAI',
-    'orai',
-);
+// window.Keplr = new Keplr();
 
 ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);

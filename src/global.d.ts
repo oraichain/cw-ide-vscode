@@ -2,6 +2,7 @@ import { BroadCastMode } from '@oraichain/cosmosjs';
 import Keplr from './lib/Keplr';
 import { Keplr as keplr } from './types/kelpr/wallet';
 import Wasm from './lib/wasm';
+import { ChainStore } from './stores/chain';
 
 declare global {
   type VSCode = {
@@ -19,7 +20,7 @@ declare global {
     fees?: number;
     funds?: string;
     memo?: string;
-    mode?: BroadCastMode;
+    mode?: string;
   };
 
   type ExecuteKeplrOptions = {
@@ -27,7 +28,7 @@ declare global {
     sequence: number;
     gas: number;
     fees: number;
-    mode?: BroadCastMode;
+    mode?: string;
   };
 
   type StatusCode = {
@@ -38,7 +39,7 @@ declare global {
 
   type keplrType = keplr;
   interface Window {
-    Wasm: Wasm;
+    chainStore: ChainStore,
     Keplr: Keplr;
     keplr: keplr;
   }

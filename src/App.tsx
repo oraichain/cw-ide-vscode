@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import WASM from './lib/wasm';
 import logo from './logo.png';
 
 let vscode: VSCode;
@@ -7,20 +8,27 @@ let vscode: VSCode;
 const App = () => {
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
-  const [mnemonic, setMnemonic] = useState('');
+  const [label, setLabel] = useState('');
+  const [chainId, setChainId] = useState('');
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
-    console.log('event: ', event);
-    console.log('message: ', message);
+    // console.log('event: ', event);
+    // console.log('message: ', message);
     setAction(message.action);
-    setWasmBody(message.payload);
-    if (!vscode) {
-      vscode = acquireVsCodeApi();
+    if (message.payload) setWasmBody(message.payload);
+    if (message.mnemonic) {
+      onDeploy(message.mnemonic);
     }
-    vscode.postMessage(`from UI: ${message.action}`);
+    try {
+      vscode = acquireVsCodeApi();
+      // vscode.postMessage(`from UI: ${message.action}`);
+    } catch (error) {
+      console.log("error in acquire vs code api: ", error);
+    }
   };
 
   useEffect(() => {
@@ -30,69 +38,18 @@ const App = () => {
     };
   });
 
-  const onDeploy = async () => {
-    const childKey = window.Wasm.cosmos.getChildKey(mnemonic);
-    const sender = window.Wasm.cosmos.getAddress(childKey);
-    const txBody = window.Wasm.getStoreMessage(wasmBody, sender, '');
-    // store code;
-    const res = await window.Wasm.cosmos.submit(
-      childKey,
-      txBody,
-      'BROADCAST_MODE_BLOCK',
-      0,
-      20000000
-    );
-    console.log('res: ', res);
-    // instantiate
-
-    const codeId = res.tx_response.logs[0].events[0].attributes.find(
-      (attr: any) => attr.key === 'code_id'
-    ).value;
-    const input = Buffer.from(initInput).toString('base64');
-    const txBody2 = window.Wasm.getInstantiateMessage(
-      codeId,
-      input,
-      sender,
-      'demo smart contract'
-    );
-    const res2 = await window.Wasm.cosmos.submit(
-      childKey,
-      txBody2,
-      'BROADCAST_MODE_BLOCK',
-      0,
-      20000000
-    );
-
-    console.log(res2);
-
-    let address = JSON.parse(res2.tx_response.raw_log)[0].events[1]
-      .attributes[0].value;
-    console.log('contract address: ', address);
-    setContractAddr(address);
-  };
-
-  // const onExecuteKeplr = async () => {
-  //   const keplr = await window.Keplr.getKeplr();
-  //   if (keplr) {
-  //     const { cosmos } = window.Wasm;
-  //     // login
-  //     await window.Keplr.suggestOraichain();
-  //     const key = await keplr.getKey(cosmos.chainId);
-  //     const sender = key.bech32Address;
-  //     // demo ping
-  //     const contract = "orai16u62y4dagpwz4su5yjzeq2v70ndq263rfn60au";
-  //     const input = Buffer.from(JSON.stringify({
-  //       add_ping: {}
-  //     }));
-  //     const txBody = window.Wasm.getHandleMessage(contract, input, sender, undefined, undefined);
-  //     const { account_number, sequence } = (await cosmos.get(`/cosmos/auth/v1beta1/accounts/${sender}`)).account;
-  //     const res = window.Keplr.handleKeplr(sender, txBody, key.pubKey, { accountNumber: account_number, sequence, gas: 2000000, fees: 0 });
-  //     console.log("response: ", res);
-  //     return res;
-  //   } else {
-  //     throw "You must install Keplr to continue signing this transaction";
-  //   }
-  // }
+  const onDeploy = async (mnemonic: any) => {
+    setErrorMessage('');
+    console.log("mnemonic in on deploy: ", mnemonic);
+    window.chainStore.setChainId(chainId);
+    try {
+      let address = await WASM.handleDeploy(mnemonic, wasmBody, initInput, label);
+      console.log("contract address: ", address);
+      setContractAddr(address);
+    } catch (error) {
+      setErrorMessage(JSON.stringify(error));
+    }
+  }
 
   return (
     <div className="App">
@@ -104,12 +61,14 @@ const App = () => {
         Action called: <br />
         <code className="ellipsis">{action}</code>
       </p>
-      <label>Please type mnemonic:</label>
+      <label>Please choose chain id:</label>
       <div>
-        <input
-          value={mnemonic}
-          onInput={(e: any) => setMnemonic(e.target.value)}
-        />
+        <select name="chain-id" value={chainId} onChange={event => setChainId(event.target.value)}>
+          {
+            window.chainStore.chainInfos.map(info =>
+              <option id={info.chainId} >{info.chainId}</option>
+            )}
+        </select>
       </div>
       <label>Please type init input:</label>
       <div>
@@ -118,11 +77,18 @@ const App = () => {
           onInput={(e: any) => setInitInput(e.target.value)}
         />
       </div>
-      <button type="button" onClick={onDeploy}>
-        <span>Deploy</span>
-      </button>
+      <label>Please type label: </label>
+      <div>
+        <input
+          value={initInput}
+          onInput={(e: any) => setLabel(e.target.value)}
+        />
+      </div>
       <div>
         {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
+      </div>
+      <div>
+        {errorMessage ? <label>Error: {errorMessage}</label> : ''}
       </div>
     </div>
   );
