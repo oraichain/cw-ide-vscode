@@ -8,7 +8,7 @@ let vscode: VSCode;
 const App = () => {
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
-  const [mnemonic, setMnemonic] = useState('');
+  const [label, setLabel] = useState('');
   const [chainId, setChainId] = useState('');
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
@@ -43,7 +43,7 @@ const App = () => {
     console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
     try {
-      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput);
+      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput, label);
       console.log("contract address: ", address);
       setContractAddr(address);
     } catch (error) {
@@ -75,6 +75,13 @@ const App = () => {
         <input
           value={initInput}
           onInput={(e: any) => setInitInput(e.target.value)}
+        />
+      </div>
+      <label>Please type label: </label>
+      <div>
+        <input
+          value={initInput}
+          onInput={(e: any) => setLabel(e.target.value)}
         />
       </div>
       <div>

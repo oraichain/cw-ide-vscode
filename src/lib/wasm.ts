@@ -2,7 +2,7 @@ import { Buffer } from "buffer";
 
 const Wasm = {
   // a wrapper method to deploy a smart contract
-  async handleDeploy(mnemonic: any | undefined, wasmBody: any, initInput: any) {
+  async handleDeploy(mnemonic: any | undefined, wasmBody: any, initInput: any, label: any) {
     const { chainStore } = window;
     const { cosmos } = chainStore;
     try {
@@ -30,7 +30,7 @@ const Wasm = {
           codeId,
           input,
           sender,
-          'demo smart contract'
+          label ? label : 'demo smart contract'
         );
         const res2 = await cosmos.submit(
           childKey,
