@@ -1,7 +1,15 @@
 import { Buffer } from "buffer";
 
-const Wasm = {
-  // a wrapper method to deploy a smart contract
+const WASM = {
+
+  /**
+   * a wrapper method to deploy a smart contract
+   * @param mnemonic - Your wallet's mnemonic to deploy the contract
+   * @param wasmBody - The bytecode of the wasm contract file
+   * @param initInput - initiate message of the contract in object string (use JSON.stringtify)
+   * @param label (optional) - contract label 
+   * @returns 
+   */
   async handleDeploy(mnemonic: any | undefined, wasmBody: any, initInput: any, label: any) {
     const { chainStore } = window;
     const { cosmos } = chainStore;
@@ -114,4 +122,4 @@ const Wasm = {
   }
 }
 
-export default Wasm;
+export default WASM;

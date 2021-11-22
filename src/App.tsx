@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import Wasm from './lib/wasm';
+import WASM from './lib/wasm';
 import logo from './logo.png';
 
 let vscode: VSCode;
@@ -43,7 +43,7 @@ const App = () => {
     console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
     try {
-      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput, label);
+      let address = await WASM.handleDeploy(mnemonic, wasmBody, initInput, label);
       console.log("contract address: ", address);
       setContractAddr(address);
     } catch (error) {
