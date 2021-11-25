@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
-import './App.css';
 import Wasm from './lib/wasm';
 import logo from './logo.png';
+import './themes/style.scss';
+import { Input, Select, Button } from 'antd';
+import { ReactComponent as IconSelect } from './assets/icons/code.svg';
+
+const { Option } = Select;
+function handleChange(value: any) {
+  console.log(`selected ${value}`);
+}
 
 let vscode: VSCode;
 
 const App = () => {
+  const DEFAULT_CHAINID = window.chainStore.chainInfos[0].chainId;
+
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
   const [mnemonic, setMnemonic] = useState('');
-  const [chainId, setChainId] = useState('');
+  const [chainId, setChainId] = useState(DEFAULT_CHAINID);
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   // Handle messages sent from the extension to the webview
@@ -26,7 +35,6 @@ const App = () => {
       console.log("error in acquire vs code api: ", error);
     }
   };
-
   useEffect(() => {
     window.addEventListener('message', eventHandler);
     return () => {
@@ -42,45 +50,49 @@ const App = () => {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1 className="App-title">Welcome to CosmWasm IDE</h1>
+    <div className="app">
+      <header className="app-header">
+        <img src={logo} className="app-logo" alt="logo" />
+        <h1 className="app-title">COSMWASM IDE</h1>
       </header>
-      <p className="App-intro">
-        Action called: <br />
-        <code className="ellipsis">{action}</code>
-      </p>
-      <label>Please choose chain id:</label>
-      <div>
-        <select name="chain-id" value={chainId} onChange={event => setChainId(event.target.value)}>
-          {
-            window.chainStore.chainInfos.map(info =>
-              <option id={info.chainId} >{info.chainId}</option>
-            )}
-        </select>
+      <div className="app-divider" />
+      <div className="app-body">
+        <div className="chain-select">
+          <h3>Select chain ID</h3>
+          <Select defaultValue={DEFAULT_CHAINID} style={{ width: 240 }} suffixIcon={<IconSelect />} onSelect={value => setChainId(value)}>
+            {
+              window.chainStore.chainInfos.map(info =>
+                <Option key={info.chainId} value={info.chainId}>{info.chainId}</Option>
+              )}
+          </Select>
+        </div>
+        <div className="wrap-form">
+          <span className="please-text">Please fill out the form below:</span>
+          <div className="input-form">
+            <h4>Mnemonic</h4>
+            <Input placeholder="eg. 1234" value={mnemonic}
+              onInput={(e: any) => setMnemonic(e.target.value)} />
+          </div>
+          <div className="input-form">
+            <h4>init contract input</h4>
+            <Input placeholder="eg. 1234" value={initInput}
+              onInput={(e: any) => setInitInput(e.target.value)} />
+          </div>
+          <div className="input-form">
+            <h4>source code url</h4>
+            <Input placeholder="eg. www.google.com" />
+          </div>
+          <div className="button-wrapper">
+            <Button onClick={onDeploy}>
+              Deploy
+            </Button>
+          </div>
+          <div>
+            {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
+          </div>
+        </div>
       </div>
-      <label>Please type mnemonic:</label>
-      <div>
-        <input
-          value={mnemonic}
-          onInput={(e: any) => setMnemonic(e.target.value)}
-        />
-      </div>
-      <label>Please type init input:</label>
-      <div>
-        <input
-          value={initInput}
-          onInput={(e: any) => setInitInput(e.target.value)}
-        />
-      </div>
-      <button type="button" onClick={onDeploy}>
-        <span>Deploy</span>
-      </button>
-      <div>
-        {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
-      </div>
-    </div>
+    </div >
   );
 };
 

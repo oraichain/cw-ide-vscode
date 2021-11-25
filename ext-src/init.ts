@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as vscode from "vscode";
 import { execSync } from "child_process";
 import { RunButton } from "./types";
@@ -62,7 +63,7 @@ const init = async (
         command: `${buildTool} \${packagePath}`,
       },
       {
-        id: "simulateeeeee",
+        id: "simulate",
         name: "$(vm) Simulate CosmWasm",
         color: "#ffffff",
         singleInstance: true,
@@ -78,7 +79,7 @@ const init = async (
     commands.forEach(
       ({ cwd, command, name, color, singleInstance, id }: RunButton) => {
         const vsCommand = `extension.${id}`;
-        const disposable = vscode.commands.registerCommand(vsCommand, () => {
+        const disposable = vscode.commands.registerCommand(vsCommand, async () => {
           const file = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.document.fileName
             : null;
@@ -103,9 +104,9 @@ const init = async (
             relativeFile:
               vscode.window.activeTextEditor && rootPath.path
                 ? path.relative(
-                    rootPath.path,
-                    vscode.window.activeTextEditor.document.fileName
-                  )
+                  rootPath.path,
+                  vscode.window.activeTextEditor.document.fileName
+                )
                 : null,
 
             // - the current opened file's basename
@@ -116,10 +117,10 @@ const init = async (
             // - the current opened file's basename with no file extension
             fileBasenameNoExtension: vscode.window.activeTextEditor
               ? path.parse(
-                  path.basename(
-                    vscode.window.activeTextEditor.document.fileName
-                  )
-                ).name
+                path.basename(
+                  vscode.window.activeTextEditor.document.fileName
+                )
+              ).name
               : null,
 
             // - the current opened file's dirname
@@ -130,10 +131,10 @@ const init = async (
             // - the current opened file's extension
             fileExtname: vscode.window.activeTextEditor
               ? path.parse(
-                  path.basename(
-                    vscode.window.activeTextEditor.document.fileName
-                  )
-                ).ext
+                path.basename(
+                  vscode.window.activeTextEditor.document.fileName
+                )
+              ).ext
               : null,
 
             // - the task runner's current working directory on startup
@@ -147,8 +148,8 @@ const init = async (
             // - the current selected text in the active file
             selectedText: vscode.window.activeTextEditor
               ? vscode.window.activeTextEditor.document.getText(
-                  vscode.window.activeTextEditor.selection
-                )
+                vscode.window.activeTextEditor.selection
+              )
               : null,
 
             // - the path to the running VS Code executable
@@ -157,6 +158,9 @@ const init = async (
 
           // show message on web panel
           const actionCommand = interpolateString(command, vars);
+
+          // await window.keplr.enable("cosmoshub-4");
+          console.log("window: ", vscode.window.state);
 
           if (id === "build") {
             const wasmBody = fs.readFileSync(wasmFile).toString("base64");
@@ -231,6 +235,12 @@ function interpolateString(tpl: string, data: object): string {
     tpl = tpl.replace(match[0], obj);
   }
   return tpl;
+}
+
+function setActionWithPayload(webview: vscode.WebviewPanel, action: Object) {
+  if (webview) {
+    webview.webview.postMessage(action); // can be object
+  }
 }
 
 export default init;

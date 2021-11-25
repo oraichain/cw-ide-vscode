@@ -37,7 +37,6 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "npm run build && npm run build-ext",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",

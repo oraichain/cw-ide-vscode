@@ -52,6 +52,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage(action); // can be object
     }
   }
+  
 
   private async _getBaseHtml(cspSource: string, nonce: string) {
     let base = '<base href="';
