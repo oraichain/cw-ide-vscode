@@ -30,6 +30,15 @@ export default class CosmWasmWebViewPanel {
             context.subscriptions
         );
 
+        // Handle messages from the webview
+        webviewPanel.webview.onDidReceiveMessage(
+            message => {
+                vscode.window.showErrorMessage(message);
+            },
+            undefined,
+            context.subscriptions
+        );
+
         this.webview = webviewPanel;
         this._getHtmlForWebview();
     }

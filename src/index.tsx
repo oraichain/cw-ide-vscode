@@ -9,6 +9,6 @@ window.chainStore = new ChainStore(EmbedChainInfos);
 
 // export default Keplr;
 // global Keplr
-window.Keplr = new Keplr();
+// window.Keplr = new Keplr();
 
 ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);

@@ -74,12 +74,12 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     // fixed development
     const entrypoints = this._isDev
       ? [
-          "./static/js/bundle.js",
-          "./static/js/vendors~main.chunk.js",
-          "./static/js/main.chunk.js",
-        ]
+        "./static/js/bundle.js",
+        "./static/js/vendors~main.chunk.js",
+        "./static/js/main.chunk.js",
+      ]
       : (require(path.join(this._buildPath.path, "asset-manifest.json"))
-          .entrypoints as string[]);
+        .entrypoints as string[]);
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = this._isDev ? "" : crypto.randomBytes(16).toString("base64");

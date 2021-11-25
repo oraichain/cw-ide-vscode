@@ -17,17 +17,21 @@ const App = () => {
 
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
-  const [mnemonic, setMnemonic] = useState('');
-  const [chainId, setChainId] = useState(DEFAULT_CHAINID);
+  const [label, setLabel] = useState('');
+  const [chainId, setChainId] = useState('');
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
     // console.log('event: ', event);
     // console.log('message: ', message);
     setAction(message.action);
-    setWasmBody(message.payload);
+    if (message.payload) setWasmBody(message.payload);
+    if (message.mnemonic) {
+      onDeploy(message.mnemonic);
+    }
     try {
       vscode = acquireVsCodeApi();
       // vscode.postMessage(`from UI: ${message.action}`);
@@ -42,11 +46,17 @@ const App = () => {
     };
   });
 
-  const onDeploy = async () => {
+  const onDeploy = async (mnemonic: any) => {
+    setErrorMessage('');
+    console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
-    let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput);
-    console.log("contract address: ", address);
-    setContractAddr(address);
+    try {
+      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput, label);
+      console.log("contract address: ", address);
+      setContractAddr(address);
+    } catch (error) {
+      setErrorMessage(JSON.stringify(error));
+    }
   }
 
   return (
@@ -69,18 +79,14 @@ const App = () => {
         <div className="wrap-form">
           <span className="please-text">Please fill out the form below:</span>
           <div className="input-form">
-            <h4>Mnemonic</h4>
-            <Input placeholder="eg. 1234" value={mnemonic}
-              onInput={(e: any) => setMnemonic(e.target.value)} />
-          </div>
-          <div className="input-form">
-            <h4>init contract input</h4>
+            <h4>init contract</h4>
             <Input placeholder="eg. 1234" value={initInput}
               onInput={(e: any) => setInitInput(e.target.value)} />
           </div>
           <div className="input-form">
-            <h4>source code url</h4>
-            <Input placeholder="eg. www.google.com" />
+            <h4>input label</h4>
+            <Input placeholder="eg. 1234" value={label}
+              onInput={(e: any) => setLabel(e.target.value)} />
           </div>
           <div className="button-wrapper">
             <Button onClick={onDeploy}>
@@ -89,6 +95,9 @@ const App = () => {
           </div>
           <div>
             {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
+          </div>
+          <div>
+            {errorMessage ? <label>Error: {errorMessage}</label> : ''}
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 import { Bech32Address } from '@keplr-wallet/cosmos';
 import { ChainInfoWithExplorer } from './stores/chain';
 
+/**
+ * A list of Cosmos chain infos. If we need to add / remove any chains, just directly update this variable.
+ */
 export const EmbedChainInfos: ChainInfoWithExplorer[] = [
     {
         rpc: 'https://rpc-osmosis.keplr.app',

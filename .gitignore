@@ -4,3 +4,4 @@ package-lock.json
 *.vsix
 build
 .env.production
+.env
