@@ -83,7 +83,7 @@
 
 .wrap-form {
   border: 1px dashed #595959;
-  padding: 16px;
+  padding: 16px 16px 0px 16px;
   margin-top: 40px;
   border-radius: 4px;
 
@@ -138,5 +138,37 @@
       font-weight: bold;
       font-size: 16px;
     }
+  }
+}
+
+.contract-address {
+  margin-top: 30px;
+  width: 100%;
+  text-overflow: hidden;
+
+  span {
+    color: #c4c6c9;
+    font-family: "Bebas";
+    font-size: 18px;
+  }
+
+  p {
+    color: #c4c6c9;
+    font-family: "Courier";
+    font-size: 16px;
+    word-wrap: break-word;
+  }
+}
+
+.deploying {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+
+  span {
+    color: #7954ff;
+    font-family: "Courier";
+    font-size: 18px;
+    margin-left: 12px;
   }
 }

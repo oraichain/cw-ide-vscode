@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react';
 import Wasm from './lib/wasm';
 import logo from './logo.png';
 import './themes/style.scss';
-import { Input, Select, Button } from 'antd';
+import { Input, Select, Spin } from 'antd';
 import { ReactComponent as IconSelect } from './assets/icons/code.svg';
+import { ReactComponent as IconChain } from './assets/icons/chain.svg';
+import { LoadingOutlined } from '@ant-design/icons';
+
+const antIcon = <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />;
 
 const { Option } = Select;
 function handleChange(value: any) {
@@ -22,6 +26,7 @@ const App = () => {
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
@@ -50,11 +55,16 @@ const App = () => {
     setErrorMessage('');
     console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
+    setIsLoading(true);
+    setContractAddr('');
+
     try {
       let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput, label);
       console.log("contract address: ", address);
       setContractAddr(address);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setErrorMessage(JSON.stringify(error));
     }
   }
@@ -68,7 +78,10 @@ const App = () => {
       <div className="app-divider" />
       <div className="app-body">
         <div className="chain-select">
-          <h3>Select chain ID</h3>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconChain style={{ width: '16px', height: '16px', marginRight: '5px', marginBottom: '8px' }} />
+            <h3> Select chain ID</h3>
+          </div>
           <Select defaultValue={DEFAULT_CHAINID} style={{ width: 240 }} suffixIcon={<IconSelect />} onSelect={value => setChainId(value)}>
             {
               window.chainStore.chainInfos.map(info =>
@@ -80,27 +93,34 @@ const App = () => {
           <span className="please-text">Please fill out the form below:</span>
           <div className="input-form">
             <h4>init contract</h4>
-            <Input placeholder="eg. 1234" value={initInput}
+            <Input placeholder={`eg. {"minter": "ADDRESS"}`} value={initInput}
               onInput={(e: any) => setInitInput(e.target.value)} />
           </div>
           <div className="input-form">
             <h4>input label</h4>
-            <Input placeholder="eg. 1234" value={label}
+            <Input placeholder="eg. random text" value={label}
               onInput={(e: any) => setLabel(e.target.value)} />
-          </div>
-          <div className="button-wrapper">
-            <Button onClick={onDeploy}>
-              Deploy
-            </Button>
-          </div>
-          <div>
-            {contractAddr ? <label>Contract addr: {contractAddr}</label> : ''}
-          </div>
-          <div>
-            {errorMessage ? <label>Error: {errorMessage}</label> : ''}
           </div>
         </div>
       </div>
+
+      {!isLoading ?
+        ((contractAddr &&
+          <div className="contract-address">
+            <span>Contract address </span>
+            <p>{contractAddr}</p>
+          </div>)
+          ||
+          (errorMessage &&
+            <div className="contract-address">
+              <span style={{ color: "red" }}>Error message </span>
+              <p>{errorMessage}</p>
+            </div>))
+        :
+        <div className="deploying">
+          <Spin indicator={antIcon} />
+          <span>Deploying ...</span>
+        </div>}
     </div >
   );
 };
