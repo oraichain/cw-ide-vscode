@@ -156,18 +156,20 @@ const init = async (
 
           // show message on web panel
           const actionCommand = interpolateString(command, vars);
-          const wasmBody = fs.readFileSync(wasmFile).toString("base64");
           if (id === "build") {
             // send post wasm body when build
-            provider.setActionWithPayload({ action: id, payload: wasmBody });
+            provider.setActionWithPayload({ action: id, payload: null });
           } else {
             //Deploy & execute case.
+            if (!fs.existsSync(getWasmFile(packagePath))) return vscode.window.showErrorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
+            const wasmBody = fs.readFileSync(wasmFile).toString("base64");
             let mnemonic = "";
             try {
               mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
               vscode.window.showErrorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
+            vscode.window.showInformationMessage("The contract is being deployed...");
             provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
           }
 
