@@ -1,9 +1,12 @@
+//@ts-nocheck
 import * as vscode from "vscode";
 import { execSync } from "child_process";
 import { RunButton } from "./types";
 import * as fs from "fs";
 import * as path from "path";
 import { CosmWasmViewProvider } from "./webview-provider";
+import constants from "./constants";
+import * as cp from 'child_process';
 
 const getPackagePath = (relativeFile: string): string => {
   let packagePath = path.dirname(relativeFile);
@@ -18,6 +21,10 @@ export const getWasmFile = (packagePath: string): string => {
   return `${packagePath}/artifacts/${path
     .basename(packagePath)
     .replace(/-/g, "_")}.wasm`;
+};
+
+export const getSchemaPath = (packagePath: string): string => {
+  return `${packagePath}/artifacts/schema`;
 };
 
 const disposables = [];
@@ -55,14 +62,14 @@ const init = async (
   const config = {
     commands: [
       {
-        id: "build",
+        id: constants.BUILD,
         name: "$(wrench) Build CosmWasm",
         color: "#ffffff",
         singleInstance: true,
         command: `${buildTool} \${packagePath}`,
       },
       {
-        id: "deploy",
+        id: constants.DEPLOY,
         name: "$(vm) Deploy CosmWasm",
         color: "#ffffff",
         singleInstance: true,
@@ -77,7 +84,7 @@ const init = async (
     commands.forEach(
       ({ cwd, command, name, color, singleInstance, id }: RunButton) => {
         const vsCommand = `extension.${id}`;
-        const disposable = vscode.commands.registerCommand(vsCommand, () => {
+        const disposable = vscode.commands.registerCommand(vsCommand, async () => {
           const file = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.document.fileName
             : null;
@@ -154,50 +161,34 @@ const init = async (
             execPath: process.execPath,
           };
 
-          // show message on web panel
-          const actionCommand = interpolateString(command, vars);
           if (id === "build") {
-            // send post wasm body when build
-            provider.setActionWithPayload({ action: id, payload: null });
+            const actionCommand = interpolateString(command, vars);
+            console.log("command: ", actionCommand);
+            cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
+              if (error) return errorMessage(stderr);
+              // send post wasm body when build & schema file path
+              let schemaPath = getSchemaPath(packagePath);
+              let schemaFile = `${schemaPath}/init_msg.json`;
+              if (!checkSchemaExist(`${schemaPath}/init_msg.json`)) {
+                if (!checkSchemaExist(`${schemaPath}/instantiate_msg.json`)) return errorMessage("Cannot collect init json schema");
+                else schemaFile = `${schemaPath}/instantiate_msg.json`;
+              }
+              provider.setActionWithPayload({
+                action: id, payload: null, schemaFile: fs.readFileSync(`${schemaFile}`).toString('ascii')
+              });
+            });
           } else {
-            //Deploy & execute case.
-            if (!fs.existsSync(getWasmFile(packagePath))) return vscode.window.showErrorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
+            //Deploy & execute case, no need to use command since already have all the wasm & schema file.
+            if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
             const wasmBody = fs.readFileSync(wasmFile).toString("base64");
             let mnemonic = "";
             try {
               mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
-              vscode.window.showErrorMessage("No .env file with mnemonic stored in the current workspace folder");
+              errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
             vscode.window.showInformationMessage("The contract is being deployed...");
             provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
-          }
-
-          const assocTerminal = terminals[vsCommand];
-          if (!assocTerminal) {
-            const terminal = vscode.window.createTerminal({
-              name,
-              cwd: vars.cwd,
-            });
-            terminal.show(true);
-            terminals[vsCommand] = terminal;
-            terminal.sendText(actionCommand);
-          } else {
-            if (singleInstance) {
-              delete terminals[vsCommand];
-              assocTerminal.dispose();
-              const terminal = vscode.window.createTerminal({
-                name,
-                cwd: vars.cwd,
-              });
-              terminal.show(true);
-              terminal.sendText(actionCommand);
-              terminals[vsCommand] = terminal;
-            } else {
-              assocTerminal.show();
-              assocTerminal.sendText("clear");
-              assocTerminal.sendText(actionCommand);
-            }
           }
         });
 
@@ -237,6 +228,14 @@ function interpolateString(tpl: string, data: object): string {
     tpl = tpl.replace(match[0], obj);
   }
   return tpl;
+}
+
+function checkSchemaExist(schemaPath: string): boolean {
+  if (fs.existsSync(schemaPath)) return true;
+}
+
+function errorMessage(msg: string) {
+  vscode.window.showErrorMessage(msg)
 }
 
 export default init;

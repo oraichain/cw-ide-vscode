@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as crypto from "crypto";
+import * as fs from "fs";
+import constants from "./constants";
 
 /**
  * Manages react webview panels
@@ -32,11 +34,25 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage((message) => {
+      console.log("message in webview receive: ", message);
       vscode.window.showInformationMessage(message);
+      if (message.command) this.handleCommand(message);
     });
 
     // store reference
     this._view = webviewView;
+  }
+
+  private handleCommand(message: any) {
+    switch (message.command) {
+      case constants.INIT_SCHEMA:
+        const initSchema = JSON.parse(fs.readFileSync(message.path).toString('ascii'));
+        console.log("init schema: ", initSchema);
+        this.setActionWithPayload({ action: constants.INIT_SCHEMA, payload: initSchema })
+        break;
+      default:
+        break;
+    }
   }
 
   public setAction(action: string) {
@@ -52,6 +68,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage(action); // can be object
     }
   }
+  
 
   private async _getBaseHtml(cspSource: string, nonce: string) {
     let base = '<base href="';

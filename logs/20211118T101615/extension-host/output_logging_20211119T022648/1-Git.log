@@ -1,0 +1,96 @@
+Validating found git in: git
+Using git 2.17.1 from git
+> git rev-parse --git-dir
+Open repository: /home/orai/vscode-cosmwasm
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git check-ignore -v -z --stdin
+> git check-ignore -v -z --stdin
+> git show --textconv :.vscode/launch.json
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/.vscode/launch.json
+> git cat-file -s 3cac224d24b0056bf362dbfc4f22755ef2da675d
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git check-ignore -v -z --stdin
+> git show --textconv :src/App.tsx
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git cat-file -s a4481dc9b21c7e58dab5d41a8c292b1973308a3d
+> git show --textconv :.vscode/launch.json
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/.vscode/launch.json
+> git cat-file -s 3cac224d24b0056bf362dbfc4f22755ef2da675d
+> git show --textconv :src/App.tsx
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git cat-file -s a4481dc9b21c7e58dab5d41a8c292b1973308a3d
+> git show --textconv :.vscode/launch.json
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/.vscode/launch.json
+> git cat-file -s 3cac224d24b0056bf362dbfc4f22755ef2da675d
+> git show --textconv :src/App.tsx
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git cat-file -s a4481dc9b21c7e58dab5d41a8c292b1973308a3d
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git show --textconv :.vscode/launch.json
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/.vscode/launch.json
+> git cat-file -s 3cac224d24b0056bf362dbfc4f22755ef2da675d
+> git show --textconv :src/App.tsx
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git cat-file -s a4481dc9b21c7e58dab5d41a8c292b1973308a3d
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git show --textconv :.vscode/launch.json
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/.vscode/launch.json
+> git cat-file -s 3cac224d24b0056bf362dbfc4f22755ef2da675d
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git show --textconv :src/App.tsx
+> git ls-files --stage -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git cat-file -s a4481dc9b21c7e58dab5d41a8c292b1973308a3d
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git status -z -u
+> git symbolic-ref --short HEAD
+> git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/feat/generic-keplr refs/remotes/feat/generic-keplr
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+> git config --get commit.template
+> git check-ignore -v -z --stdin
+> git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%B -z -n21 -- /home/orai/vscode-cosmwasm/src/App.tsx
+> git check-ignore -v -z --stdin
+> git check-ignore -v -z --stdin
+> git check-ignore -v -z --stdin

@@ -33,7 +33,7 @@ else
     cp "$basedir/target/wasm32-unknown-unknown/debug/$name.wasm" artifacts
 fi
 
-build_schema="${2:-false}"
+build_schema="${2:-true}"
 # create schema if there is
 if [ "$build_schema" == 'true' ]; then
     echo "Creating schema in $contractdir"

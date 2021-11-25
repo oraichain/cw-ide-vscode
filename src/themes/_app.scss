@@ -1,0 +1,174 @@
+.app {
+  background: #191b20;
+  height: 100vh;
+  padding: 16px 20px;
+
+  .app-header {
+    color: white;
+    display: flex;
+    align-items: center;
+
+    .app-logo {
+      height: 40px;
+    }
+
+    .app-title {
+      font-size: 1.8rem;
+      font-family: "Bebas";
+      background: -webkit-linear-gradient(45deg, #f5cca3 0%, #fd8ab6 50.52%, #9a5beb 100%);
+      background-clip: text;
+      margin: 0 0 0 12px;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .app-divider {
+    height: 1px;
+    background: linear-gradient(45deg, #f5cca3 0%, #fd8ab6 50.52%, #9a5beb 100%);
+    width: 100%;
+    margin: 20px 0;
+    opacity: 0.2;
+  }
+
+  .app-body {
+    .chain-select {
+      margin-top: 20px;
+      h3 {
+        text-transform: uppercase;
+        font-family: "Bebas";
+        font-size: 1.2rem;
+        color: #c4c6c9;
+        // letter-spacing: 1px;
+      }
+
+      .ant-select {
+        .ant-select-selector {
+          background: #5c5b61;
+          border-radius: 4px;
+          border: none;
+          height: 40px;
+          color: white;
+          font-family: "Courier";
+          font-weight: normal;
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+
+          .ant-select-selection-item {
+            height: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+.ant-select-dropdown {
+  background: #3f3e44 !important;
+  font-family: "Courier";
+
+  .ant-select-item {
+    color: white !important;
+  }
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background: #4b4a50;
+}
+
+.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background: #4b4a50;
+}
+
+.wrap-form {
+  border: 1px dashed #595959;
+  padding: 16px 16px 0px 16px;
+  margin-top: 40px;
+  border-radius: 4px;
+
+  .please-text {
+    color: #c4c6c9;
+    font-family: "Courier";
+    font-weight: normal;
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .input-form {
+    h4 {
+      font-family: "Bebas";
+      font-size: 16px;
+      color: #c4c6c9;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    margin-bottom: 20px;
+
+    input {
+      background: transparent;
+      border: 1px solid #5c5b61 !important;
+      border-radius: 4px;
+      border: none;
+      height: 36px;
+      color: white;
+      font-family: "Courier";
+      font-weight: normal;
+      font-size: 14px;
+
+      &::placeholder {
+        color: #5c5b61;
+      }
+    }
+  }
+
+  .button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      width: 200px;
+      height: 40px;
+      background: #7954ff;
+      border: none;
+      color: white;
+      font-family: "Courier";
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+}
+
+.contract-address {
+  margin-top: 30px;
+  width: 100%;
+  text-overflow: hidden;
+
+  span {
+    color: #c4c6c9;
+    font-family: "Bebas";
+    font-size: 18px;
+  }
+
+  p {
+    color: #c4c6c9;
+    font-family: "Courier";
+    font-size: 16px;
+    word-wrap: break-word;
+  }
+}
+
+.deploying {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+
+  span {
+    color: #7954ff;
+    font-family: "Courier";
+    font-size: 18px;
+    margin-left: 12px;
+  }
+}
