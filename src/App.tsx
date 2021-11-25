@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import WASM from './lib/wasm';
 import logo from './logo.png';
+import Form from "@rjsf/core";
 
 let vscode: VSCode;
 
@@ -13,6 +14,8 @@ const App = () => {
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [schema, setSchema] = useState({});
+
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
@@ -28,6 +31,11 @@ const App = () => {
       // vscode.postMessage(`from UI: ${message.action}`);
     } catch (error) {
       console.log("error in acquire vs code api: ", error);
+    }
+    // if message payload is build => post message back to extension to collect schema file
+    if (message.action === "build") {
+      console.log("message schema file: ", message.schemaFile);
+      setSchema(JSON.parse(message.schemaFile));
     }
   };
 
@@ -90,6 +98,7 @@ const App = () => {
       <div>
         {errorMessage ? <label>Error: {errorMessage}</label> : ''}
       </div>
+      {/* {schema ? <Form schema={schema} /> : null} */}
     </div>
   );
 };
