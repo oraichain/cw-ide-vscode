@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as vscode from "vscode";
 import { execSync } from "child_process";
 import { RunButton } from "./types";
@@ -83,7 +84,7 @@ const init = async (
     commands.forEach(
       ({ cwd, command, name, color, singleInstance, id }: RunButton) => {
         const vsCommand = `extension.${id}`;
-        const disposable = vscode.commands.registerCommand(vsCommand, () => {
+        const disposable = vscode.commands.registerCommand(vsCommand, async () => {
           const file = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.document.fileName
             : null;
@@ -160,12 +161,11 @@ const init = async (
             execPath: process.execPath,
           };
 
-          // show message on web panel
-          const actionCommand = interpolateString(command, vars);
-          console.log("command: ", actionCommand);
-          cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
-            if (error) return errorMessage(stderr);
-            if (id === "build") {
+          if (id === "build") {
+            const actionCommand = interpolateString(command, vars);
+            console.log("command: ", actionCommand);
+            cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
+              if (error) return errorMessage(stderr);
               // send post wasm body when build & schema file path
               let schemaPath = getSchemaPath(packagePath);
               let schemaFile = `${schemaPath}/init_msg.json`;
@@ -176,20 +176,20 @@ const init = async (
               provider.setActionWithPayload({
                 action: id, payload: null, schemaFile: fs.readFileSync(`${schemaFile}`).toString('ascii')
               });
-            } else {
-              //Deploy & execute case.
-              if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
-              const wasmBody = fs.readFileSync(wasmFile).toString("base64");
-              let mnemonic = "";
-              try {
-                mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
-              } catch (error) {
-                errorMessage("No .env file with mnemonic stored in the current workspace folder");
-              }
-              vscode.window.showInformationMessage("The contract is being deployed...");
-              provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
+            });
+          } else {
+            //Deploy & execute case, no need to use command since already have all the wasm & schema file.
+            if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
+            const wasmBody = fs.readFileSync(wasmFile).toString("base64");
+            let mnemonic = "";
+            try {
+              mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
+            } catch (error) {
+              errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
-          });
+            vscode.window.showInformationMessage("The contract is being deployed...");
+            provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
+          }
         });
 
         context.subscriptions.push(disposable);
@@ -235,7 +235,7 @@ function checkSchemaExist(schemaPath: string): boolean {
 }
 
 function errorMessage(msg: string) {
-  vscode.window.showErrorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying")
+  vscode.window.showErrorMessage(msg)
 }
 
 export default init;

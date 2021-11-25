@@ -7,3 +7,9 @@ export interface RunButton {
   name: string;
   color: string;
 }
+
+declare global {
+  interface Window {
+    keplr: any;
+  }
+}

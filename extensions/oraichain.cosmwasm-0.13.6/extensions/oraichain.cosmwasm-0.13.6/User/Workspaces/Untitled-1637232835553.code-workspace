@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-remote://125.212.192.225:5050/home/orai/oraiwasm"
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"remoteAuthority": "125.212.192.225:5050"
+}
