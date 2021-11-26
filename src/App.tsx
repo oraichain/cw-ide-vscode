@@ -135,9 +135,9 @@ const App = () => {
           <Spin indicator={antIcon} />
           <span>Deploying ...</span>
         </div>}
-      {initSchema ? <Form schema={initSchema} /> : null}
-      {handleSchema ? <Form schema={handleSchema} /> : null}
-      {querySchema ? <Form schema={querySchema} /> : null}
+      {initSchema ? <Form schema={initSchema} /> : ''}
+      {handleSchema ? <Form schema={handleSchema} /> : ''}
+      {querySchema ? <Form schema={querySchema} /> : ''}
     </div >
 
   );
