@@ -29,6 +29,12 @@ export const getSchemaPath = (packagePath: string): string => {
 
 const disposables = [];
 
+/**
+ * This function initiates all the important logic of the extension
+ * @param context - vscode extension context
+ * @param provider - the cosmwasm webview provider.
+ * @returns 
+ */
 const init = async (
   context: vscode.ExtensionContext,
   provider: CosmWasmViewProvider
@@ -241,6 +247,12 @@ function errorMessage(msg: string) {
   vscode.window.showErrorMessage(msg)
 }
 
+/**
+ * This function read a selected file from a given directory path and return its content
+ * @param dirname - directory path to the file
+ * @param fileName - the file name that we want to read the content
+ * @returns - a promise which includes the content of the file 
+ */
 function readFiles(dirname: string, fileName: any): Promise<any> {
   return new Promise((resolve, reject) => {
     fs.readdir(dirname, function (err, filenames) {
