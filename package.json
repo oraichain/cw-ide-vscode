@@ -37,7 +37,7 @@
     }
   },
   "scripts": {
-    "compile": "npm run build && npm run build-ext",
+    "compile": "npm run build-ext",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",

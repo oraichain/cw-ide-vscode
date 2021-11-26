@@ -11,9 +11,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 const antIcon = <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />;
 
 const { Option } = Select;
-function handleChange(value: any) {
-  console.log(`selected ${value}`);
-}
 
 let vscode: VSCode;
 
@@ -27,7 +24,9 @@ const App = () => {
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [schema, setSchema] = useState({});
+  const [initSchema, setInitSchema] = useState({});
+  const [querySchema, setQuerySchema] = useState({});
+  const [handleSchema, setHandleSchema] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
@@ -38,7 +37,7 @@ const App = () => {
     setAction(message.action);
     if (message.payload) setWasmBody(message.payload);
     if (message.mnemonic) {
-      onDeploy(message.mnemonic);
+      onDeploy(message.mnemonic, message.payload);
     }
     try {
       vscode = acquireVsCodeApi();
@@ -47,10 +46,17 @@ const App = () => {
       console.log("error in acquire vs code api: ", error);
     }
     // if message payload is build => post message back to extension to collect schema file
-    // if (message.action === "build") {
-    //   console.log("message schema file: ", message.schemaFile);
-    //   setSchema(JSON.parse(message.schemaFile));
-    // }
+    if (message.action === "build") {
+      console.log("message schema file: ", message.schemaFile);
+      setInitSchema(JSON.parse(message.schemaFile));
+      setHandleSchema({});
+      setQuerySchema({});
+    }
+    if (message.action === "deploy") {
+      setInitSchema({});
+      setHandleSchema(JSON.parse(message.handleFile));
+      setQuerySchema(JSON.parse(message.queryFile));
+    }
   };
   useEffect(() => {
     window.addEventListener('message', eventHandler);
@@ -59,7 +65,7 @@ const App = () => {
     };
   });
 
-  const onDeploy = async (mnemonic: any) => {
+  const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
     setErrorMessage('');
     console.log("mnemonic in on deploy: ", mnemonic);
     window.chainStore.setChainId(chainId);
@@ -67,7 +73,7 @@ const App = () => {
     setContractAddr('');
 
     try {
-      let address = await Wasm.handleDeploy(mnemonic, wasmBody, initInput, label);
+      let address = await Wasm.handleDeploy(mnemonic, wasmBytes ? wasmBytes : wasmBody, initInput, label);
       console.log("contract address: ", address);
       setContractAddr(address);
       setIsLoading(false);
@@ -129,7 +135,9 @@ const App = () => {
           <Spin indicator={antIcon} />
           <span>Deploying ...</span>
         </div>}
-      {/* {schema ? <Form schema={schema} /> : null} */}
+      {initSchema ? <Form schema={initSchema} /> : null}
+      {handleSchema ? <Form schema={handleSchema} /> : null}
+      {querySchema ? <Form schema={querySchema} /> : null}
     </div >
 
   );
