@@ -79,7 +79,7 @@
     "@keplr-wallet/cosmos": "^0.9.6",
     "@keplr-wallet/stores": "^0.9.6",
     "@keplr-wallet/types": "^0.9.6",
-    "@oraichain/cosmosjs": "^0.0.73",
+    "@oraichain/cosmosjs": "^0.0.75",
     "@rjsf/core": "^3.2.1",
     "antd": "^4.16.13",
     "env-cmd": "^10.1.0",

@@ -1995,10 +1995,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@oraichain/cosmosjs@^0.0.73":
-  version "0.0.73"
-  resolved "https://registry.yarnpkg.com/@oraichain/cosmosjs/-/cosmosjs-0.0.73.tgz#8a74f443381477dc75640d308ac702cf84c885c4"
-  integrity sha512-DUTGQwkxlHMX9fsrXyd3GBEfeiYLLMq84obS/RQcXcrx3UAM82C9eyF5/JAbSgxWveSds1NTCUrTbiL1dtuIzg==
+"@oraichain/cosmosjs@^0.0.75":
+  version "0.0.75"
+  resolved "https://registry.yarnpkg.com/@oraichain/cosmosjs/-/cosmosjs-0.0.75.tgz#2e7f5f6d572c725d9025297e2a991becacb1850a"
+  integrity sha512-LFhGLjpkeU8Jq/1Oi9oYAEtGQz3AXy+RxY+uWXWdPSi/xIxhwLytSUiaXyUYF6PlIn74zuR1X2I8dfbctjljXA==
   dependencies:
     bech32 "^1.1.3"
     bip32 "^2.0.5"
@@ -6248,9 +6248,9 @@ globby@^6.1.0:
     pinkie-promise "^2.0.0"
 
 google-protobuf@^3.14.0:
-  version "3.18.1"
-  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.18.1.tgz#31de10b65e833aa5bbd44680e8a748fa54c920f6"
-  integrity sha512-cDqSamZ8rGs+pOzhIsBte7wpezUKg/sggeptDWN5odhnRY/eDLa5VWLeNeQvcfiqjS3yUwgM+6OePCJMB7aWZA==
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.19.1.tgz#5af5390e8206c446d8f49febaffd4b7f4ac28f41"
+  integrity sha512-Isv1RlNC+IzZzilcxnlVSf+JvuhxmY7DaxYCBy+zPS9XVuJRtlTTIXR9hnZ1YL1MMusJn/7eSy2swCzZIomQSg==
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
   version "4.2.8"
@@ -8581,9 +8581,9 @@ node-addon-api@^2.0.0:
   integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
 
 node-fetch@^2.6.1:
-  version "2.6.5"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.5.tgz#42735537d7f080a7e5f78b6c549b7146be1742fd"
-  integrity sha512-mmlIVHJEu5rnIxgEgez6b9GgWXbkZj5YZ7fx+2r94a2E+Uirsp6HsPTPlomfdHtpt/B0cdKviwkoaM6pyvUOpQ==
+  version "2.6.6"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.6.tgz#1751a7c01834e8e1697758732e9efb6eeadfaf89"
+  integrity sha512-Z8/6vRlTUChSdIgMa51jxQ4lrw/Jy5SOW10ObaA47/RElsAN2c5Pn8bTgFGWn/ibwzXTE8qwr1Yzx28vsecXEA==
   dependencies:
     whatwg-url "^5.0.0"
 

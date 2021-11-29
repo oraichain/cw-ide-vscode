@@ -172,7 +172,7 @@ const init = async (
 
           if (id === "build") {
             const actionCommand = interpolateString(command, vars);
-            console.log("command: ", actionCommand);
+            infoMessage("Your contract is being built ...");
             cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
               if (error) return errorMessage(stderr);
               // send post wasm body when build & schema file path
@@ -185,6 +185,7 @@ const init = async (
               provider.setActionWithPayload({
                 action: id, payload: null, schemaFile: fs.readFileSync(`${schemaFile}`).toString('ascii')
               });
+              infoMessage("Your contract has been successfully built!");
             });
           } else {
             //Deploy & execute case, no need to use command since already have all the wasm & schema file.
@@ -245,6 +246,10 @@ function checkSchemaExist(schemaPath: string): boolean {
 
 function errorMessage(msg: string) {
   vscode.window.showErrorMessage(msg)
+}
+
+function infoMessage(msg: string) {
+  vscode.window.showInformationMessage(msg)
 }
 
 /**

@@ -15,12 +15,12 @@ const { Option } = Select;
 let vscode: VSCode;
 
 const App = () => {
-  const DEFAULT_CHAINID = window.chainStore.chainInfos[0].chainId;
+  const DEFAULT_CHAINMAME = window.chainStore.chainInfos[0].chainName;
 
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
   const [label, setLabel] = useState('');
-  const [chainId, setChainId] = useState('');
+  const [chainName, setChainName] = useState(DEFAULT_CHAINMAME);
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -68,12 +68,13 @@ const App = () => {
   const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
     setErrorMessage('');
     console.log("mnemonic in on deploy: ", mnemonic);
-    window.chainStore.setChainId(chainId);
+    console.log("chain name: ", chainName);
+    window.chainStore.setChain(chainName);
     setIsLoading(true);
     setContractAddr('');
 
     try {
-      let address = await Wasm.handleDeploy(mnemonic, wasmBytes ? wasmBytes : wasmBody, initInput, label);
+      let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
       console.log("contract address: ", address);
       setContractAddr(address);
       setIsLoading(false);
@@ -94,12 +95,15 @@ const App = () => {
         <div className="chain-select">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <IconChain style={{ width: '16px', height: '16px', marginRight: '5px', marginBottom: '8px' }} />
-            <h3> Select chain ID</h3>
+            <h3> Select chain name</h3>
           </div>
-          <Select defaultValue={DEFAULT_CHAINID} style={{ width: 240 }} suffixIcon={<IconSelect />} onSelect={value => setChainId(value)}>
+          <Select defaultValue={DEFAULT_CHAINMAME} style={{ width: 240 }} suffixIcon={<IconSelect />} onSelect={value => {
+            setChainName(value);
+            window.chainStore.setChain(value);
+          }}>
             {
               window.chainStore.chainInfos.map(info =>
-                <Option key={info.chainId} value={info.chainId}>{info.chainId}</Option>
+                <Option key={info.chainName} value={info.chainName}>{info.chainName}</Option>
               )}
           </Select>
         </div>

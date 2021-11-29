@@ -10,21 +10,22 @@ const WASM = {
    * @param label (optional) - contract label 
    * @returns 
    */
-  async handleDeploy(mnemonic: any | undefined, wasmBody: any, initInput: any, label: any) {
+  async handleDeploy(args: { mnemonic: any | undefined, wasmBody: any, initInput: any, label: string, sourceCode?: string | undefined, fees?: any[] | undefined }) {
     const { chainStore } = window;
     const { cosmos } = chainStore;
+    const { mnemonic, wasmBody, initInput, label, sourceCode, fees } = args;
     try {
       if (process.env.REACT_APP_ENV === "vscode-dev" || mnemonic) {
         console.log("in production ready to use cosmosjs oraichain");
         const childKey = cosmos.getChildKey(mnemonic);
         const sender = cosmos.getAddress(childKey);
-        const txBody = chainStore.getStoreMessage(wasmBody, sender, '');
+        const txBody = chainStore.getStoreMessage(wasmBody, sender, sourceCode);
         // store code;
         const res = await cosmos.submit(
           childKey,
           txBody,
           'BROADCAST_MODE_BLOCK',
-          0,
+          fees,
           20000000
         );
         console.log('res: ', res);
@@ -44,7 +45,7 @@ const WASM = {
           childKey,
           txBody2,
           'BROADCAST_MODE_BLOCK',
-          0,
+          fees,
           20000000
         );
 

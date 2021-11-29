@@ -8,6 +8,7 @@ import Cosmos from '@oraichain/cosmosjs';
 export interface ChainInfoWithExplorer extends ChainInfo {
     // Formed as "https://explorer.com/{txHash}"
     explorerUrlToTx: string;
+    faucet?: string;
 }
 
 /** basically query and execute, with param : contract, lcd, and simulate is true or false
@@ -55,11 +56,26 @@ export class ChainStore extends BaseChainStore<ChainInfoWithExplorer> {
 
     /**
      * Update chain id and other relevant info for cosmosjs & chain info
-     * @param chainId 
+     * @param chainName 
      */
 
     @action
-    setChainId(chainId: string) {
+    setChain(chainName: string) {
+        let chainId = this.getChainId(chainName);
+        this.setChainId(chainId);
+    }
+
+    private getChainId(chainName: string) {
+        if (chainName) {
+            let chainInfo = this.chainInfos.find(info => info.chainName === chainName);
+            if (chainInfo) return chainInfo.chainId;
+            throw new Error(`Chain id not found from chain name: ${chainName}`);
+        }
+        throw new Error("Invalid chain name");
+    }
+
+    @action
+    private setChainId(chainId: string) {
         if (chainId) {
             let chainInfo = this.getChain(chainId);
             this.chainId = chainId;
@@ -162,7 +178,7 @@ export class ChainStore extends BaseChainStore<ChainInfoWithExplorer> {
      * @param source (optional) - the source code URL
      * @returns a TxBody type including a store code message
      */
-    getStoreMessage(wasm_byte_code: any, sender: string, source: string) {
+    getStoreMessage(wasm_byte_code: any, sender: string, source?: string | undefined) {
         const msgSend = new message.cosmwasm.wasm.v1beta1.MsgStoreCode({
             wasm_byte_code,
             sender,
