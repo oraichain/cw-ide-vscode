@@ -53,6 +53,7 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         },
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://testnet.scan.orai.io/txs/${txHash}',
+        hdPath: "m/44'/118'/0'/0/0",
     },
     {
         rpc: 'https://rpc.orai.io',
@@ -103,6 +104,7 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         },
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://scan.orai.io/txs/${txHash}',
+        hdPath: "m/44'/118'/0'/0/0",
     },
     {
         rpc: 'https://bombay-fcd.terra.dev',
@@ -236,6 +238,51 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         ],
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://explorer.test.provenance.io/tx/{txHash}',
+    },
+    {
+        rpc: 'https://rpc-stargateworld.fetch.ai',
+        rest: 'https://rest-stargateworld.fetch.ai',
+        chainId: 'stargateworld-3',
+        chainName: 'Fetch AI Testnet',
+        stakeCurrency: {
+            coinDenom: 'testfet',
+            coinMinimalDenom: 'atestfest',
+            coinDecimals: 18,
+            coinGeckoId: 'fetch-ai',
+            coinImageUrl: window.location.origin + '/public/assets/tokens/fetch-ai.png',
+        },
+        bip44: {
+            coinType: 118,
+        },
+        bech32Config: Bech32Address.defaultBech32Config('fetch'),
+        currencies: [
+            {
+                coinDenom: 'testfet',
+                coinMinimalDenom: 'atestfest',
+                coinDecimals: 18,
+                coinGeckoId: 'fetch-ai',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/fetch-ai.png',
+            },
+            {
+                coinDenom: 'testfet',
+                coinMinimalDenom: 'atestfest',
+                coinDecimals: 18,
+                coinGeckoId: 'fetch-ai',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/fetch-ai.png',
+            },
+        ],
+        feeCurrencies: [
+            {
+                coinDenom: 'testfet',
+                coinMinimalDenom: 'atestfest',
+                coinDecimals: 18,
+                coinGeckoId: 'fetch-ai',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/fetch-ai.png',
+            },
+        ],
+        features: ['stargate', 'ibc-transfer', 'cosmwasm'],
+        explorerUrlToTx: 'https://explore-stargateworld.fetch.ai/transactions/{txHash}',
+        hdPath: "m/44'/118'/0'/0/0",
     },
     // {
     //     rpc: 'https://rpc-regen.keplr.app',

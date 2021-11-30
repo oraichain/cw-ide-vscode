@@ -167,11 +167,9 @@ const init = async (
             execPath: process.execPath,
           };
 
-          let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
-          let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
-
           if (id === "build") {
             const actionCommand = interpolateString(command, vars);
+            console.log("action command: ", actionCommand);
             infoMessage("Your contract is being built ...");
             cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
               if (error) return errorMessage(stderr);
@@ -188,6 +186,8 @@ const init = async (
               infoMessage("Your contract has been successfully built!");
             });
           } else {
+            let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
+            let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
             //Deploy & execute case, no need to use command since already have all the wasm & schema file.
             if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
             const wasmBody = fs.readFileSync(wasmFile).toString("base64");
@@ -262,7 +262,7 @@ function readFiles(dirname: string, fileName: any): Promise<any> {
   return new Promise((resolve, reject) => {
     fs.readdir(dirname, function (err, filenames) {
       if (err) {
-        reject(error);
+        reject(err);
       }
       filenames.forEach(function (filename) {
         if (filename.includes(fileName) || filename.includes(fileName.OLD_VERSION) || filename.includes(fileName.NEW_VERSION)) {

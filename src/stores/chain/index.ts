@@ -9,6 +9,7 @@ export interface ChainInfoWithExplorer extends ChainInfo {
     // Formed as "https://explorer.com/{txHash}"
     explorerUrlToTx: string;
     faucet?: string;
+    hdPath?: string,
 }
 
 /** basically query and execute, with param : contract, lcd, and simulate is true or false

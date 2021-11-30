@@ -7,6 +7,7 @@ import { Input, Select, Spin } from 'antd';
 import { ReactComponent as IconSelect } from './assets/icons/code.svg';
 import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
+import CosmJs from './lib/cosmjs';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />;
 
@@ -20,6 +21,8 @@ const App = () => {
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
   const [label, setLabel] = useState('');
+  const [gasPrice, setGasPrice] = useState('0');
+  const [gasDenom, setGasDenom] = useState(window.chainStore.chainInfos[0].feeCurrencies[0].coinMinimalDenom);
   const [chainName, setChainName] = useState(DEFAULT_CHAINMAME);
   const [initInput, setInitInput] = useState('');
   const [contractAddr, setContractAddr] = useState('');
@@ -74,7 +77,8 @@ const App = () => {
     setContractAddr('');
 
     try {
-      let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
+      // let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
+      let address = await CosmJs.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, fees: { amount: gasPrice, denom: gasDenom } });
       console.log("contract address: ", address);
       setContractAddr(address);
       setIsLoading(false);
@@ -119,6 +123,16 @@ const App = () => {
             <Input placeholder="eg. random text" value={label}
               onInput={(e: any) => setLabel(e.target.value)} />
           </div>
+          <div className="input-form">
+            <h4>Gas price</h4>
+            <Input placeholder="eg. 0.0025" value={gasPrice}
+              onInput={(e: any) => setGasPrice(e.target.value)} />
+          </div>
+          <div className="input-form">
+            <h4>Gas denom</h4>
+            <Input placeholder="eg. orai" value={gasDenom}
+              onInput={(e: any) => setGasDenom(e.target.value)} />
+          </div>
         </div>
       </div>
 
@@ -139,9 +153,9 @@ const App = () => {
           <Spin indicator={antIcon} />
           <span>Deploying ...</span>
         </div>}
-      {initSchema ? <Form schema={initSchema} /> : ''}
-      {handleSchema ? <Form schema={handleSchema} /> : ''}
-      {querySchema ? <Form schema={querySchema} /> : ''}
+      {initSchema ? <Form schema={initSchema} /> : <div />}
+      {handleSchema ? <Form schema={handleSchema} /> : <div />}
+      {querySchema ? <Form schema={querySchema} /> : <div />}
     </div >
 
   );
