@@ -27,7 +27,7 @@
         {
           "id": "cosmwasm-ide",
           "title": "CosmWasm IDE",
-          "icon": "logo-128.png"
+          "icon": "logo.svg"
         }
       ]
     },
@@ -38,7 +38,7 @@
           "id": "cosmwasm.interactView",
           "name": "CosmWasm Interaction",
           "contextualTitle": "CosmWasm Interaction",
-          "icon": "logo-128.png"
+          "icon": "logo-test.png"
         }
       ]
     },
@@ -80,8 +80,10 @@
     "@keplr-wallet/stores": "^0.9.6",
     "@keplr-wallet/types": "^0.9.6",
     "@oraichain/cosmosjs": "^0.0.75",
+    "@rjsf/antd": "^3.2.1",
     "@rjsf/core": "^3.2.1",
-    "antd": "^4.16.13",
+    "antd": "^4.17.2",
+    "dayjs": "^1.10.7",
     "env-cmd": "^10.1.0",
     "mobx-react-lite": "^3.2.2",
     "react": "^17.0.2",
