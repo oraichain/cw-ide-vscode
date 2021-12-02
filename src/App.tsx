@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Wasm from './lib/wasm';
 import logo from './logo.png';
-import Form from "@rjsf/core";
+// import Form from "@rjsf/core";
+import Form from '@rjsf/antd';
 import './themes/style.scss';
 import { Input, Select, Spin } from 'antd';
 import { ReactComponent as IconSelect } from './assets/icons/code.svg';
@@ -153,9 +154,9 @@ const App = () => {
           <Spin indicator={antIcon} />
           <span>Deploying ...</span>
         </div>}
-      {initSchema ? <Form schema={initSchema} /> : <div />}
-      {handleSchema ? <Form schema={handleSchema} /> : <div />}
-      {querySchema ? <Form schema={querySchema} /> : <div />}
+      {initSchema ? (<Form schema={initSchema} onSubmit={(data) => { console.log("ABCD: ", data) }} />) : ''}
+      {handleSchema ? <Form schema={handleSchema} /> : ''}
+      {querySchema ? <Form schema={querySchema} /> : ''}
     </div >
 
   );
