@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import Wasm from './lib/wasm';
-import logo from './logo.png';
+import { useEffect, useState } from "react";
+import Wasm from "./lib/wasm";
+import logo from "./logo.png";
 // import Form from "@rjsf/core";
 import Form from '@rjsf/antd';
 import './themes/style.scss';
@@ -10,7 +10,9 @@ import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
 import CosmJs from './lib/cosmjs';
 
-const antIcon = <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />;
+const antIcon = (
+  <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
+);
 
 const { Option } = Select;
 
@@ -19,18 +21,22 @@ let vscode: VSCode;
 const App = () => {
   const DEFAULT_CHAINMAME = window.chainStore.chainInfos[0].chainName;
 
+  const [isBuilt, setIsBuilt] = useState(false);
+  const [isDeployed, setIsDeployed] = useState(false);
+
   const [action, setAction] = useState();
   const [wasmBody, setWasmBody] = useState();
   const [label, setLabel] = useState('');
   const [gasPrice, setGasPrice] = useState('0');
   const [gasDenom, setGasDenom] = useState(window.chainStore.chainInfos[0].feeCurrencies[0].coinMinimalDenom);
   const [chainName, setChainName] = useState(DEFAULT_CHAINMAME);
-  const [initInput, setInitInput] = useState('');
-  const [contractAddr, setContractAddr] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [initInput, setInitInput] = useState("");
+  const [contractAddr, setContractAddr] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [initSchema, setInitSchema] = useState({});
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
+  const [initSchemaData, setInitSchemaData] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
@@ -55,39 +61,58 @@ const App = () => {
       setInitSchema(JSON.parse(message.schemaFile));
       setHandleSchema({});
       setQuerySchema({});
+      setIsBuilt(true);
+      setErrorMessage("");
     }
     if (message.action === "deploy") {
       setInitSchema({});
       setHandleSchema(JSON.parse(message.handleFile));
       setQuerySchema(JSON.parse(message.queryFile));
+      setIsBuilt(false);
     }
   };
   useEffect(() => {
-    window.addEventListener('message', eventHandler);
+    window.addEventListener("message", eventHandler);
     return () => {
-      window.removeEventListener('message', eventHandler);
+      window.removeEventListener("message", eventHandler);
     };
   });
 
   const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
-    setErrorMessage('');
+    if (!initSchemaData) return;
+    console.log("init schema: ", initSchemaData);
+    setErrorMessage("");
     console.log("mnemonic in on deploy: ", mnemonic);
     console.log("chain name: ", chainName);
     window.chainStore.setChain(chainName);
     setIsLoading(true);
-    setContractAddr('');
+    setContractAddr("");
 
     try {
       // let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
-      let address = await CosmJs.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, fees: { amount: gasPrice, denom: gasDenom } });
+      let address = await CosmJs.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput: initSchemaData, label, fees: { amount: gasPrice, denom: gasDenom } });
       console.log("contract address: ", address);
       setContractAddr(address);
+      setIsDeployed(true);
       setIsLoading(false);
     } catch (error) {
+      setIsDeployed(false);
       setIsLoading(false);
       setErrorMessage(JSON.stringify(error));
     }
+  };
+
+  const handleMinter = (minter) => {
+    setInitSchemaData(minter);
+  };
+
+  const onQuery = async (data) => {
+    console.log("data: ", data)
+    const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
+    console.log("query result: ", queryResult);
   }
+
+  console.log(initSchema);
 
   return (
     <div className="app">
@@ -98,31 +123,48 @@ const App = () => {
       <div className="app-divider" />
       <div className="app-body">
         <div className="chain-select">
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconChain style={{ width: '16px', height: '16px', marginRight: '5px', marginBottom: '8px' }} />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <IconChain
+              style={{
+                width: "16px",
+                height: "16px",
+                marginRight: "5px",
+                marginBottom: "8px",
+              }}
+            />
             <h3> Select chain name</h3>
           </div>
-          <Select defaultValue={DEFAULT_CHAINMAME} style={{ width: 240 }} suffixIcon={<IconSelect />} onSelect={value => {
-            setChainName(value);
-            window.chainStore.setChain(value);
-          }}>
-            {
-              window.chainStore.chainInfos.map(info =>
-                <Option key={info.chainName} value={info.chainName}>{info.chainName}</Option>
-              )}
+          <Select
+            defaultValue={DEFAULT_CHAINMAME}
+            style={{ width: 240 }}
+            suffixIcon={<IconSelect />}
+            onSelect={(value) => {
+              setChainName(value);
+              window.chainStore.setChain(value);
+              setGasDenom(window.chainStore.current.feeCurrencies[0].coinMinimalDenom);
+            }}
+          >
+            {window.chainStore.chainInfos.map((info) => (
+              <Option key={info.chainName} value={info.chainName}>
+                {info.chainName}
+              </Option>
+            ))}
           </Select>
         </div>
         <div className="wrap-form">
           <span className="please-text">Please fill out the form below:</span>
-          <div className="input-form">
+          {/* <div className="input-form">
             <h4>init contract</h4>
             <Input placeholder={`eg. {"minter": "ADDRESS"}`} value={initInput}
               onInput={(e: any) => setInitInput(e.target.value)} />
-          </div>
+          </div> */}
           <div className="input-form">
             <h4>input label</h4>
-            <Input placeholder="eg. random text" value={label}
-              onInput={(e: any) => setLabel(e.target.value)} />
+            <Input
+              placeholder="eg. random text"
+              value={label}
+              onInput={(e: any) => setLabel(e.target.value)}
+            />
           </div>
           <div className="input-form">
             <h4>Gas price</h4>
@@ -137,28 +179,40 @@ const App = () => {
         </div>
       </div>
 
-      {!isLoading ?
-        ((contractAddr &&
+      {!isLoading ? (
+        (contractAddr && (
           <div className="contract-address">
             <span>Contract address </span>
             <p>{contractAddr}</p>
-          </div>)
-          ||
-          (errorMessage &&
-            <div className="contract-address">
-              <span style={{ color: "red" }}>Error message </span>
-              <p>{errorMessage}</p>
-            </div>))
-        :
+          </div>
+        )) ||
+        (errorMessage && (
+          <div className="contract-address">
+            <span style={{ color: "red" }}>Error message </span>
+            <p>{errorMessage}</p>
+          </div>
+        ))
+      ) : (
         <div className="deploying">
           <Spin indicator={antIcon} />
           <span>Deploying ...</span>
-        </div>}
-      {initSchema ? (<Form schema={initSchema} onSubmit={(data) => { console.log("ABCD: ", data) }} />) : ''}
-      {handleSchema ? <Form schema={handleSchema} /> : ''}
-      {querySchema ? <Form schema={querySchema} /> : ''}
-    </div >
+        </div>
+      )}
 
+      {isBuilt && (
+        <Form
+          schema={initSchema}
+          onSubmit={(data) => handleMinter(data?.formData)}
+        // onChange={(data) => { setInitSchemaData(data) }}
+        />
+      )}
+      {isDeployed && (
+        <>
+          <Form schema={handleSchema} />
+          <Form schema={querySchema} onSubmit={(data) => onQuery(data?.formData)} />
+        </>
+      )}
+    </div>
   );
 };
 
