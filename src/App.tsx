@@ -34,6 +34,7 @@ const App = () => {
   const [initSchema, setInitSchema] = useState({});
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
+  let tempValue;
 
   const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
@@ -62,6 +63,7 @@ const App = () => {
       setErrorMessage("");
     }
     if (message.action === "deploy") {
+      setInitInput(tempValue);
       setInitSchema({});
       setHandleSchema(JSON.parse(message.handleFile));
       setQuerySchema(JSON.parse(message.queryFile));
@@ -102,10 +104,12 @@ const App = () => {
     }
   };
 
-  const setMinter = throttle((value) => setInitSchema(value), 1000);
+  const setMinterValue = throttle((value) => setInitInput(value), 1000, {
+    trailing: true,
+  });
 
   const handleChangeMinter = (value) => {
-    setMinter(value);
+    console.log(value);
   };
 
   return (
@@ -183,10 +187,13 @@ const App = () => {
       )}
 
       {isBuilt && (
-        <Form
-          schema={initSchema}
-          onChange={(e) => handleChangeMinter(e.formData)}
-        />
+        <>
+          <Form
+            schema={initSchema}
+            // onChange={(e) => setInitInput(e.formData.minter)}
+            onChange={(e) => (tempValue = e.formData.minter)}
+          />
+        </>
       )}
       {isDeployed && (
         <>
