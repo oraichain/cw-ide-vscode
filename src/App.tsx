@@ -8,6 +8,7 @@ import { Input, Select, Spin } from "antd";
 import { ReactComponent as IconSelect } from "./assets/icons/code.svg";
 import { ReactComponent as IconChain } from "./assets/icons/chain.svg";
 import { LoadingOutlined } from "@ant-design/icons";
+import throttle from "lodash/throttle";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -101,11 +102,11 @@ const App = () => {
     }
   };
 
-  const handleMinter = (minter) => {
-    setInitSchema(minter);
-  };
+  const setMinter = throttle((value) => setInitSchema(value), 1000);
 
-  console.log(initSchema);
+  const handleChangeMinter = (value) => {
+    setMinter(value);
+  };
 
   return (
     <div className="app">
@@ -184,7 +185,7 @@ const App = () => {
       {isBuilt && (
         <Form
           schema={initSchema}
-          onSubmit={(data) => handleMinter(data?.formData)}
+          onChange={(e) => handleChangeMinter(e.formData)}
         />
       )}
       {isDeployed && (
