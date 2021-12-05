@@ -47,7 +47,7 @@ const CosmJs = {
             console.log("upload result: ", uploadResult);
 
             const codeId = uploadResult.codeId;
-            const input = JSON.parse(initInput);
+            const input = initInput;
 
             // instantiate contract with input
             const instantiateResult = await client.instantiate(firstAccount.address, codeId, input, label ? label : "smart contract");
