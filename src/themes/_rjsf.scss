@@ -3,7 +3,7 @@ body {
 }
 
 .rjsf {
-  background: #191b20;
+  background: #191b20 !important;
   margin-top: 30px;
 
   .ant-form-item-label {
@@ -16,7 +16,7 @@ body {
 
   span,
   label {
-    color: #c4c6c9;
+    color: #c4c6c9 !important;
   }
 
   .form-group {
@@ -34,7 +34,7 @@ body {
       border-radius: 4px;
       border: none;
       height: 36px;
-      color: white;
+      color: white !important;
       font-family: "Courier";
       font-weight: normal;
       font-size: 14px;

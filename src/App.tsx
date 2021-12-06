@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Wasm from "./lib/wasm";
 import logo from "./logo.png";
 // import Form from "@rjsf/core";
 import Form from '@rjsf/antd';
@@ -10,6 +9,8 @@ import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
 import CosmJs from './lib/cosmjs';
 import _ from "lodash";
+import { CustomForm } from "./components";
+import ReactJson from 'react-json-view'
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -35,6 +36,7 @@ const App = () => {
   const [initSchema, setInitSchema] = useState({});
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
+  const [resultJson, setResultJson] = useState({});
   // const [initSchemaData, setInitSchemaData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
@@ -53,7 +55,7 @@ const App = () => {
     // if message payload is build => post message back to extension to collect schema file
     if (message.action === "build") {
       console.log("message schema file: ", message.schemaFile);
-      setInitSchema(JSON.parse(message.schemaFile));
+      setInitSchema(processSchema(JSON.parse(message.schemaFile)));
       setHandleSchema({});
       setQuerySchema({});
       setIsBuilt(true);
@@ -61,8 +63,8 @@ const App = () => {
       setErrorMessage("");
     }
     if (message.action === "deploy") {
-      setHandleSchema(JSON.parse(message.handleFile));
-      setQuerySchema(JSON.parse(message.queryFile));
+      setHandleSchema(processSchema(JSON.parse(message.handleFile)));
+      setQuerySchema(processSchema(JSON.parse(message.queryFile)));
     }
   };
   useEffect(() => {
@@ -72,10 +74,27 @@ const App = () => {
     };
   });
 
-  const handleOnChange = ({ formData }, e) => {
-    // setInitSchemaData(formData);
-    console.log("Data submitted: ", formData)
+  const processSchema = (schema) => {
+    if ((schema.oneOf || schema.anyOf)) {
+      let key = 'anyOf';
+      if (schema.oneOf) key = 'oneOf';
+      schema[key] = ((schema.oneOf || schema.anyOf)).map((item) => ({
+        ...item, title: item.required[0]
+          .replace(/_/g, ' ')
+          .replace(/(?<=^|\s+)\w/g, (v) => v.toUpperCase())
+      }))
+      return schema;
+    }
+    return {
+      ...schema, title: schema.required[0]
+        .replace(/_/g, ' ')
+        .replace(/(?<=^|\s+)\w/g, (v) => v.toUpperCase())
+    }
   };
+
+  const handleOnChange = _.throttle(({ formData }) => {
+    setInitSchemaData(formData);
+  }, 2000, { 'trailing': true })
 
   const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
     console.log("Instantiate data: ", initSchemaData);
@@ -109,6 +128,7 @@ const App = () => {
     console.log("data: ", data)
     const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
     console.log("query result: ", queryResult);
+    setResultJson({ data: queryResult });
   }
 
   return (
@@ -175,8 +195,10 @@ const App = () => {
             </div>
             <Form
               schema={initSchema}
+              formData={initSchemaData}
               onChange={handleOnChange}
               onSubmit={(data) => setInitSchemaData(data.formData)}
+              children={true}
             />
           </div>
         )
@@ -201,10 +223,13 @@ const App = () => {
         </div>
       )}
       {isDeployed && (
-        <>
+        <div>
           {/* <Form schema={handleSchema} /> */}
-          <Form schema={querySchema} onSubmit={(data) => onQuery(data.formData)} noValidate />
-        </>
+          <CustomForm schema={querySchema} onSubmit={(data) => onQuery(data)} />
+          {!_.isEmpty(resultJson) && (
+            <ReactJson collapseStringsAfterLength={20} name={false} displayObjectSize={false} src={resultJson} theme={"ocean"} />
+          )}
+        </div>
       )}
       {!isBuilt && !isDeployed && !isLoading && !errorMessage && (
         <div className="intro">
