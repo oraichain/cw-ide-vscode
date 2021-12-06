@@ -9,6 +9,7 @@ import { ReactComponent as IconSelect } from "./assets/icons/code.svg";
 import { ReactComponent as IconChain } from "./assets/icons/chain.svg";
 import { LoadingOutlined } from "@ant-design/icons";
 import throttle from "lodash/throttle";
+import input from "antd/lib/input";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -34,7 +35,7 @@ const App = () => {
   const [initSchema, setInitSchema] = useState({});
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
-  let tempValue;
+  let tempValue = "";
 
   const [isLoading, setIsLoading] = useState(false);
   // Handle messages sent from the extension to the webview
@@ -55,19 +56,21 @@ const App = () => {
     }
     // if message payload is build => post message back to extension to collect schema file
     if (message.action === "build") {
+      tempValue = "";
       console.log("message schema file: ", message.schemaFile);
       setInitSchema(JSON.parse(message.schemaFile));
       setHandleSchema({});
       setQuerySchema({});
       setIsBuilt(true);
+      setIsDeployed(false);
       setErrorMessage("");
     }
     if (message.action === "deploy") {
-      setInitInput(tempValue);
       setInitSchema({});
       setHandleSchema(JSON.parse(message.handleFile));
       setQuerySchema(JSON.parse(message.queryFile));
       setIsBuilt(false);
+      setIsDeployed(true);
     }
   };
   useEffect(() => {
@@ -98,19 +101,18 @@ const App = () => {
       setIsDeployed(true);
       setIsLoading(false);
     } catch (error) {
-      setIsDeployed(false);
       setIsLoading(false);
       setErrorMessage(JSON.stringify(error));
     }
   };
 
-  const setMinterValue = throttle((value) => setInitInput(value), 1000, {
-    trailing: true,
-  });
+  // const setMinterValue = throttle((value) => setInitInput(value), 1000, {
+  //   trailing: true,
+  // });
 
-  const handleChangeMinter = (value) => {
-    console.log(value);
-  };
+  // const handleChangeMinter = (value) => {
+  //   console.log(value);
+  // };
 
   return (
     <div className="app">
@@ -166,39 +168,44 @@ const App = () => {
         </div>
       </div>
 
-      {!isLoading ? (
-        (contractAddr && (
-          <div className="contract-address">
-            <span>Contract address </span>
-            <p>{contractAddr}</p>
-          </div>
-        )) ||
-        (errorMessage && (
-          <div className="contract-address">
-            <span style={{ color: "red" }}>Error message </span>
-            <p>{errorMessage}</p>
-          </div>
-        ))
-      ) : (
-        <div className="deploying">
-          <Spin indicator={antIcon} />
-          <span>Deploying ...</span>
-        </div>
-      )}
-
       {isBuilt && (
         <>
           <Form
             schema={initSchema}
             // onChange={(e) => setInitInput(e.formData.minter)}
             onChange={(e) => (tempValue = e.formData.minter)}
+            children={true}
           />
+          <button onClick={() => console.log(tempValue)}></button>
         </>
       )}
       {isDeployed && (
         <>
-          <Form schema={handleSchema} />
-          <Form schema={querySchema} />
+          {!isLoading ? (
+            (contractAddr && (
+              <>
+                <div className="contract-address">
+                  <span>Contract address </span>
+                  <p>{contractAddr}</p>
+                </div>
+                <h4 className="form-title">Handle form</h4>
+                <Form schema={handleSchema} />
+                <h4 className="form-title">Querry form</h4>
+                <Form schema={querySchema} />
+              </>
+            )) ||
+            (errorMessage && (
+              <div className="contract-address">
+                <span style={{ color: "red" }}>Error message </span>
+                <p>{errorMessage}</p>
+              </div>
+            ))
+          ) : (
+            <div className="deploying">
+              <Spin indicator={antIcon} />
+              <span>Deploying ...</span>
+            </div>
+          )}
         </>
       )}
     </div>
