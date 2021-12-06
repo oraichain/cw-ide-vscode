@@ -22,12 +22,23 @@
   ],
   "main": "./out/ext-src/extension",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cosmwasm-ide",
+          "title": "CosmWasm IDE",
+          "icon": "logo.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "cosmwasm-ide": [
         {
           "type": "webview",
           "id": "cosmwasm.interactView",
-          "name": "CosmWasm Interaction"
+          "name": "CosmWasm Interaction",
+          "contextualTitle": "CosmWasm Interaction",
+          "icon": "logo-test.png"
         }
       ]
     },
@@ -37,7 +48,7 @@
     }
   },
   "scripts": {
-    "compile": "npm run build && npm run build-ext",
+    "compile": "npm run build-ext",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",
@@ -45,7 +56,7 @@
     "prod": "env-cmd -f .env.production react-scripts start",
     "start:browser-dev": "env-cmd -f .env.browser-dev react-scripts start",
     "start:vscode-dev": "env-cmd -f .env.vscode-dev react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run build && react-scripts build",
     "build-ext": "tsc -p tsconfig.extension.json"
   },
   "devDependencies": {
@@ -65,16 +76,27 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@cosmjs/cosmwasm-stargate": "0.25.0",
+    "@cosmjs/crypto": "^0.26.5",
+    "@cosmjs/math": "^0.26.5",
+    "@cosmjs/proto-signing": "^0.26.5",
+    "@cosmjs/stargate": "^0.26.5",
     "@keplr-wallet/cosmos": "^0.9.6",
     "@keplr-wallet/stores": "^0.9.6",
     "@keplr-wallet/types": "^0.9.6",
-    "@oraichain/cosmosjs": "^0.0.73",
+    "@oraichain/cosmosjs": "^0.0.75",
+    "@rjsf/antd": "^3.2.1",
     "@rjsf/core": "^3.2.1",
-    "antd": "^4.16.13",
+    "@types/lodash": "^4.14.177",
+    "antd": "^4.17.2",
+    "base64-arraybuffer": "^1.0.1",
+    "dayjs": "^1.10.7",
     "env-cmd": "^10.1.0",
+    "lodash": "^4.17.21",
     "mobx-react-lite": "^3.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-json-view": "^1.21.3",
     "sass": "^1.43.2",
     "shelljs": "^0.8.4"
   },

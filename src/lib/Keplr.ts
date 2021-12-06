@@ -6,7 +6,7 @@ export default class Keplr {
     suggestChain = async () => {
         let { current } = window.chainStore;
         console.log("window chainstore current: ", window.chainStore.current);
-        // await window.keplr.experimentalSuggestChain(current);
+        await window.keplr.experimentalSuggestChain(current);
         console.log("after suggest chain");
         await window.keplr.enable(current.chainId);
         console.log("enabled");

@@ -29,6 +29,12 @@ export const getSchemaPath = (packagePath: string): string => {
 
 const disposables = [];
 
+/**
+ * This function initiates all the important logic of the extension
+ * @param context - vscode extension context
+ * @param provider - the cosmwasm webview provider.
+ * @returns 
+ */
 const init = async (
   context: vscode.ExtensionContext,
   provider: CosmWasmViewProvider
@@ -163,7 +169,8 @@ const init = async (
 
           if (id === "build") {
             const actionCommand = interpolateString(command, vars);
-            console.log("command: ", actionCommand);
+            console.log("action command: ", actionCommand);
+            infoMessage("Your contract is being built ...");
             cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
               if (error) return errorMessage(stderr);
               // send post wasm body when build & schema file path
@@ -176,19 +183,22 @@ const init = async (
               provider.setActionWithPayload({
                 action: id, payload: null, schemaFile: fs.readFileSync(`${schemaFile}`).toString('ascii')
               });
+              infoMessage("Your contract has been successfully built!");
             });
           } else {
+            let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
+            let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
             //Deploy & execute case, no need to use command since already have all the wasm & schema file.
             if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
             const wasmBody = fs.readFileSync(wasmFile).toString("base64");
+            // get handle & query json schema
             let mnemonic = "";
             try {
               mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
               errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
-            vscode.window.showInformationMessage("The contract is being deployed...");
-            provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic });
+            provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
           }
         });
 
@@ -236,6 +246,37 @@ function checkSchemaExist(schemaPath: string): boolean {
 
 function errorMessage(msg: string) {
   vscode.window.showErrorMessage(msg)
+}
+
+function infoMessage(msg: string) {
+  vscode.window.showInformationMessage(msg)
+}
+
+/**
+ * This function read a selected file from a given directory path and return its content
+ * @param dirname - directory path to the file
+ * @param fileName - the file name that we want to read the content
+ * @returns - a promise which includes the content of the file 
+ */
+function readFiles(dirname: string, fileName: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dirname, function (err, filenames) {
+      if (err) {
+        reject(err);
+      }
+      filenames.forEach(function (filename) {
+        if (filename.includes(fileName) || filename.includes(fileName.OLD_VERSION) || filename.includes(fileName.NEW_VERSION)) {
+          fs.readFile(path.join(dirname, filename), 'utf-8', function (err, content) {
+            if (err) {
+              reject(err);
+            }
+            // force return here because we dont read two files
+            resolve(content);
+          });
+        }
+      });
+    });
+  })
 }
 
 export default init;
