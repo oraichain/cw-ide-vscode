@@ -24,6 +24,7 @@ const App = () => {
   const DEFAULT_CHAINMAME = window.chainStore.chainInfos[0].chainName;
 
   const [initSchemaData, setInitSchemaData] = useState({});
+  const [mnemonic, setMnemonic] = useState('');
   const [isBuilt, setIsBuilt] = useState(false);
   const [isDeployed, setIsDeployed] = useState(false);
   const [wasmBody, setWasmBody] = useState();
@@ -44,6 +45,7 @@ const App = () => {
     const message = event.data; // The json data that the extension sent
     if (message.payload) setWasmBody(message.payload);
     if (message.mnemonic) {
+      setMnemonic(message.mnemonic);
       onDeploy(message.mnemonic, message.payload);
     }
     try {
@@ -85,11 +87,7 @@ const App = () => {
       }))
       return schema;
     }
-    return {
-      ...schema, title: schema.required[0]
-        .replace(/_/g, ' ')
-        .replace(/(?<=^|\s+)\w/g, (v) => v.toUpperCase())
-    }
+    return schema
   };
 
   const handleOnChange = _.throttle(({ formData }) => {
@@ -127,6 +125,13 @@ const App = () => {
   const onQuery = async (data) => {
     console.log("data: ", data)
     const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
+    console.log("query result: ", queryResult);
+    setResultJson({ data: queryResult });
+  }
+
+  const onHandle = async (data) => {
+    console.log("data: ", data)
+    const queryResult = await CosmJs.execute({ mnemonic, address: contractAddr, handleMsg: JSON.stringify(data), fees: { amount: gasPrice, denom: gasDenom } });
     console.log("query result: ", queryResult);
     setResultJson({ data: queryResult });
   }
@@ -224,7 +229,27 @@ const App = () => {
       )}
       {isDeployed && (
         <div>
-          {/* <Form schema={handleSchema} /> */}
+          <div className="app-divider" />
+          <div className="contract-address">
+            <span>Contract Execute </span>
+          </div>
+          <div className="wrap-form">
+            <div className="input-form">
+              <h4>Gas price</h4>
+              <Input placeholder="eg. 0.0025" value={gasPrice}
+                onInput={(e: any) => setGasPrice(e.target.value)} />
+            </div>
+            <div className="input-form">
+              <h4>Gas denom</h4>
+              <Input placeholder="eg. orai" value={gasDenom}
+                onInput={(e: any) => setGasDenom(e.target.value)} />
+            </div>
+          </div>
+          <CustomForm schema={handleSchema} onSubmit={(data) => onHandle(data)} />
+          <div className="app-divider" />
+          <div className="contract-address">
+            <span>Contract Query </span>
+          </div>
           <CustomForm schema={querySchema} onSubmit={(data) => onQuery(data)} />
           {!_.isEmpty(resultJson) && (
             <ReactJson collapseStringsAfterLength={20} name={false} displayObjectSize={false} src={resultJson} theme={"ocean"} />

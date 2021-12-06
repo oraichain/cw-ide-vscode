@@ -22,23 +22,12 @@
   ],
   "main": "./out/ext-src/extension",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "cosmwasm-ide",
-          "title": "CosmWasm IDE",
-          "icon": "logo.svg"
-        }
-      ]
-    },
     "views": {
-      "cosmwasm-ide": [
+      "explorer": [
         {
           "type": "webview",
           "id": "cosmwasm.interactView",
-          "name": "CosmWasm Interaction",
-          "contextualTitle": "CosmWasm Interaction",
-          "icon": "logo-test.png"
+          "name": "CosmWasm Interaction"
         }
       ]
     },
