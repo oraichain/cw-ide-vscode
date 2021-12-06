@@ -34,7 +34,7 @@ const App = () => {
   const [chainName, setChainName] = useState(DEFAULT_CHAINMAME);
   const [contractAddr, setContractAddr] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [initSchema, setInitSchema] = useState({});
+  const [initSchema, setInitSchema] = useState(undefined);
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
   const [resultJson, setResultJson] = useState({});
@@ -96,7 +96,7 @@ const App = () => {
 
   const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
     console.log("Instantiate data: ", initSchemaData);
-    if (_.isEmpty(initSchemaData)) {
+    if (!initSchemaData) {
       setErrorMessage("Instantiate data is empty!");
       return;
     };
@@ -112,7 +112,7 @@ const App = () => {
       setContractAddr(address);
       setIsDeployed(true);
       setIsBuilt(false);
-      setInitSchema({});
+      setInitSchema(undefined);
       setIsLoading(false);
     } catch (error) {
       setIsDeployed(false);

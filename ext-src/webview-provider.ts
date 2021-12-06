@@ -68,7 +68,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage(action); // can be object
     }
   }
-  
+
 
   private async _getBaseHtml(cspSource: string, nonce: string) {
     let base = '<base href="';
@@ -80,7 +80,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       base += `http://localhost:${port}/" />`;
     } else {
       base += `${this._buildPath.with({ scheme: "vscode-resource" })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource}; img-src * data:; script-src 'nonce-${nonce}';">`;
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src ${cspSource} 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
     }
 
     return base;
