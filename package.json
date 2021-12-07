@@ -1,9 +1,9 @@
 {
   "name": "cosmwasm",
   "displayName": "VsCode CosmWasm",
-  "description": "CosmWasm build & optimize and simulate",
+  "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.11",
+  "version": "0.13.19",
   "publisher": "oraichain",
   "homepage": "https://orai.io",
   "license": "MIT OR Apache-2.0",
@@ -22,23 +22,12 @@
   ],
   "main": "./out/ext-src/extension",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "cosmwasm-ide",
-          "title": "CosmWasm IDE",
-          "icon": "logo.svg"
-        }
-      ]
-    },
     "views": {
-      "cosmwasm-ide": [
+      "explorer": [
         {
           "type": "webview",
           "id": "cosmwasm.interactView",
-          "name": "CosmWasm Interaction",
-          "contextualTitle": "CosmWasm Interaction",
-          "icon": "logo-test.png"
+          "name": "CosmWasm Interaction"
         }
       ]
     },
