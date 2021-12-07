@@ -258,7 +258,7 @@ const App = () => {
       )}
       {!isBuilt && !isDeployed && !isLoading && !errorMessage && (
         <div className="intro">
-          Start the Wasm smart contract development journey with CosmWasm IDE by building your first contract!
+          Start the Wasm smart contract development journey with CosmWasm IDE by building your first contract! Choose a smart contract file and click the button 'Build CosmWasm' to build your contract.
         </div>
       )}
     </div>
