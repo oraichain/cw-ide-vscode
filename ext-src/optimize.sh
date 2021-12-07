@@ -14,6 +14,18 @@ basedir=$(pwd)
 build_release="${3:-true}"
 # name is extract from Cargo.toml
 name=$(basename "$contractdir")
+
+if [ ! `which pcregrep` ]
+then
+    echo "install pcregrep"
+    if [ $(uname) == 'Linux' ]
+    then 
+        sudo apt install pcregrep -y
+    else 
+        brew install pcregrep
+    fi
+fi
+
 build_name=$(pcregrep -io1 'name\s*=\s*"(.*)"' $contractdir/Cargo.toml)
 build_name=${build_name//-/_}
 cd "$contractdir"
