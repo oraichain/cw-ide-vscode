@@ -4,7 +4,7 @@ name: Deploy VSCode CosmWasm Extension onto Open VSX & Visual Studio Marketplace
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ feat/cicd ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
