@@ -17,13 +17,14 @@ optimization on the build size, using binary stripping and `wasm-opt`.
 
 ## cosmwasm-vscode interface
 
-The extension provides two custom VS Code buttons: ```Build CosmWasm``` and ```Simulate Cosmwasm``` under the status bar of Vs Code. The ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code. Meanwhile, the ```Simulate Cosmwasm``` button will start a new simulate session using the contract file that is currently opened.
+The extension provides two custom VS Code buttons: ```Build CosmWasm```,  ```Deploy Cosmwasm``` under the status bar of Vs Code and a ```CosmWasm IDE Explorer``` under the ```Explorer``` tab of VS Code. The ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code. Meanwhile, the ```Deploy Cosmwasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
 
-The extension also includes a new side bar called: ```CosmWasm Interaction```, which is a React application allowing users to deploy and interact with the smart contracts through a specific Cosmos-based network using Wasmd.
+The CosmWasm IDE Explorer helps you modify the destination network that you want to interact with, and you can use it to interact with the smart contract you deploy with corresponding execute and query actions.
 
 ## Deploy to vscode marketplace
 
 ```sh
+vsce package
 vsce publish --pat $AUTHORIZATION
 ```
 
