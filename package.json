@@ -45,7 +45,7 @@
     "prod": "env-cmd -f .env.production react-scripts start",
     "start:browser-dev": "env-cmd -f .env.browser-dev react-scripts start",
     "start:vscode-dev": "env-cmd -f .env.vscode-dev react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build --max_old_space_size=8192",
     "build-ext": "tsc -p tsconfig.extension.json",
     "vscode:prepublish": "npm run build-ext && react-scripts build"
   },
