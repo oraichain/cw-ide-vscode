@@ -12,9 +12,9 @@ body {
 }
 
 .rjsf {
-  background: #191b20 !important;
+  background: #191b20;
   margin-top: 30px;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 
   .errors {
     margin-bottom: 20px;
@@ -31,6 +31,20 @@ body {
     border-radius: 4px;
     font-weight: bold;
     font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background: #6745e2;
+    }
+
+    &[disabled],
+    &[disabled]:hover {
+      background: #504e55;
+    }
   }
 
   .ant-form-item-label {
@@ -54,6 +68,7 @@ body {
       label {
         font-family: "Bebas";
         font-size: 16px;
+        color: #c4c6c9;
       }
     }
 
@@ -62,7 +77,7 @@ body {
       border-radius: 4px;
       border: none;
       height: 36px;
-      color: white !important;
+      color: white;
       font-family: "Courier";
       font-weight: normal;
       font-size: 14px;
@@ -74,7 +89,10 @@ body {
     }
   }
 
-  .ant-select {
+  .ant-form-item .ant-select,
+  .form-group .ant-select {
+    width: 100%;
+
     .ant-select-selector {
       background: #5c5b61;
       border-radius: 4px;
@@ -93,9 +111,33 @@ body {
         color: white;
       }
     }
+
+    .ant-select-arrow {
+      margin-top: -8px;
+    }
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled),
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: #2e2b34 !important;
+  }
+
+  .ant-select-item-option-selected,
+  .ant-select-item-option-active {
+    background-color: #3d3a43 !important;
   }
 
   .ant-form-item {
     margin-bottom: 12px;
+  }
+}
+
+.rc-virtual-list {
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: #2e2b34 !important;
+  }
+
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: #312e38 !important;
   }
 }
