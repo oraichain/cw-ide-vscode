@@ -47,7 +47,7 @@
     "start:vscode-dev": "env-cmd -f .env.vscode-dev react-scripts start",
     "build": "react-scripts --max_old_space_size=8192 build",
     "build-ext": "tsc -p tsconfig.extension.json",
-    "vscode:prepublish": "npm run build-ext && react-scripts build"
+    "vscode:prepublish": "npm run build-ext && react-scripts --max_old_space_size=8192 build"
   },
   "devDependencies": {
     "@cosmjs/launchpad": "^0.26.2",
