@@ -41,6 +41,7 @@ const App = () => {
   const [resultJson, setResultJson] = useState({});
   // const [initSchemaData, setInitSchemaData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isInteractionLoading, setIsInteractionLoading] = useState(false);
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
@@ -114,26 +115,37 @@ const App = () => {
       setIsDeployed(true);
       setIsBuilt(false);
       setInitSchema(undefined);
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       setIsBuilt(true);
       setErrorMessage(String(error));
     }
+    setIsLoading(false);
   };
 
   const onQuery = async (data) => {
     console.log("data: ", data)
-    const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
-    console.log("query result: ", queryResult);
-    setResultJson({ data: queryResult });
+    setIsInteractionLoading(true);
+    try {
+      const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
+      console.log("query result: ", queryResult);
+      setResultJson({ data: queryResult });
+    } catch (error) {
+      setErrorMessage(String(error));
+    }
+    setIsInteractionLoading(false);
   }
 
   const onHandle = async (data) => {
     console.log("data: ", data)
-    const queryResult = await CosmJs.execute({ mnemonic, address: contractAddr, handleMsg: JSON.stringify(data), fees: { amount: gasPrice, denom: gasDenom } });
-    console.log("query result: ", queryResult);
-    setResultJson({ data: queryResult });
+    setIsInteractionLoading(true);
+    try {
+      const queryResult = await CosmJs.execute({ mnemonic, address: contractAddr, handleMsg: JSON.stringify(data), fees: { amount: gasPrice, denom: gasDenom } });
+      console.log("query result: ", queryResult);
+      setResultJson({ data: queryResult });
+    } catch (error) {
+      setErrorMessage(String(error));
+    }
+    setIsInteractionLoading(false);
   }
 
   return (
@@ -251,8 +263,25 @@ const App = () => {
             <span>Contract Query </span>
           </div>
           <CustomForm schema={querySchema} onSubmit={(data) => onQuery(data)} />
+
+          {!isInteractionLoading ?
+            (errorMessage && (
+              <div className="contract-address">
+                <span style={{ color: "red" }}>Error message </span>
+                <p>{errorMessage}</p>
+              </div>
+            )
+            ) : (
+              <div className="deploying">
+                <Spin indicator={antIcon} />
+                <span>Invoking ...</span>
+              </div>
+            )
+          }
           {!_.isEmpty(resultJson) && (
-            <ReactJson collapseStringsAfterLength={20} name={false} displayObjectSize={false} src={resultJson} theme={"ocean"} />
+            <div style={{ marginTop: '10px' }}>
+              <ReactJson collapseStringsAfterLength={20} name={false} displayObjectSize={false} src={resultJson} theme={"ocean"} />
+            </div>
           )}
         </div>
       )}
