@@ -3,7 +3,7 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.21",
+  "version": "0.13.22",
   "publisher": "oraichain",
   "homepage": "https://orai.io",
   "license": "MIT OR Apache-2.0",
