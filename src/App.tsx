@@ -10,7 +10,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import CosmJs from './lib/cosmjs';
 import _ from "lodash";
 import { CustomForm } from "./components";
-import ReactJson from 'react-json-view'
+import ReactJson from 'react-json-view';
+import input from "antd/lib/input";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -115,7 +116,6 @@ const App = () => {
       setInitSchema(undefined);
       setIsLoading(false);
     } catch (error) {
-      setIsDeployed(false);
       setIsLoading(false);
       setIsBuilt(true);
       setErrorMessage(String(error));
