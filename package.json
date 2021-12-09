@@ -67,6 +67,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@cosmjs/cosmwasm-stargate": "0.25.0",
+    "@cosmjs/cosmwasm-stargate-1.0": "npm:@cosmjs/cosmwasm-stargate@0.27.0",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/math": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",

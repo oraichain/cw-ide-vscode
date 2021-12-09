@@ -8,9 +8,11 @@ import { ReactComponent as IconSelect } from './assets/icons/code.svg';
 import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
 import CosmJs from './lib/cosmjs';
+import CosmJsLatest from './lib/cosmjs-latest';
 import _ from "lodash";
 import { CustomForm } from "./components";
 import ReactJson from 'react-json-view';
+import CosmJsFactory from "./lib/cosmjs-factory";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -107,8 +109,9 @@ const App = () => {
     setContractAddr("");
 
     try {
+      let cosmJs = new CosmJsFactory(window.chainStore.current);
       // let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
-      let address = await CosmJs.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput: initSchemaData, label, fees: { amount: gasPrice, denom: gasDenom } });
+      let address = await cosmJs.current.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput: initSchemaData, label, fees: { amount: gasPrice, denom: gasDenom } });
       console.log("contract address: ", address);
       setContractAddr(address);
       setIsDeployed(true);
@@ -124,8 +127,9 @@ const App = () => {
   const onQuery = async (data) => {
     console.log("data: ", data)
     setIsInteractionLoading(true);
+    let cosmJs = new CosmJsFactory(window.chainStore.current);
     try {
-      const queryResult = await CosmJs.query(contractAddr, JSON.stringify(data));
+      const queryResult = await cosmJs.current.query(contractAddr, JSON.stringify(data));
       console.log("query result: ", queryResult);
       setResultJson({ data: queryResult });
     } catch (error) {
@@ -137,8 +141,9 @@ const App = () => {
   const onHandle = async (data) => {
     console.log("data: ", data)
     setIsInteractionLoading(true);
+    let cosmJs = new CosmJsFactory(window.chainStore.current);
     try {
-      const queryResult = await CosmJs.execute({ mnemonic, address: contractAddr, handleMsg: JSON.stringify(data), fees: { amount: gasPrice, denom: gasDenom } });
+      const queryResult = await cosmJs.current.execute({ mnemonic, address: contractAddr, handleMsg: JSON.stringify(data), gasAmount: { amount: gasPrice, denom: gasDenom } });
       console.log("query result: ", queryResult);
       setResultJson({ data: queryResult });
     } catch (error) {

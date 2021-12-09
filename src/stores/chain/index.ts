@@ -10,6 +10,7 @@ export interface ChainInfoWithExplorer extends ChainInfo {
     explorerUrlToTx: string;
     faucet?: string;
     hdPath?: string,
+    cosmwasmVersion: string,
 }
 
 /** basically query and execute, with param : contract, lcd, and simulate is true or false
