@@ -7,12 +7,11 @@ import { Input, Select, Spin } from 'antd';
 import { ReactComponent as IconSelect } from './assets/icons/code.svg';
 import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
-import CosmJs from './lib/cosmjs';
-import CosmJsLatest from './lib/cosmjs-latest';
 import _ from "lodash";
 import { CustomForm } from "./components";
 import ReactJson from 'react-json-view';
 import CosmJsFactory from "./lib/cosmjs-factory";
+import instantiateOptionsSchema from "./types/schema/instantiate-options";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -24,7 +23,6 @@ let vscode: VSCode;
 
 const App = () => {
   const DEFAULT_CHAINMAME = window.chainStore.chainInfos[0].chainName;
-
   const [initSchemaData, setInitSchemaData] = useState({});
   const [mnemonic, setMnemonic] = useState('');
   const [isBuilt, setIsBuilt] = useState(false);
@@ -40,9 +38,12 @@ const App = () => {
   const [querySchema, setQuerySchema] = useState({});
   const [handleSchema, setHandleSchema] = useState({});
   const [resultJson, setResultJson] = useState({});
-  // const [initSchemaData, setInitSchemaData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isInteractionLoading, setIsInteractionLoading] = useState(false);
+  const [deploySource, setDeploySource] = useState('');
+  const [deployBuilder, setDeployBuilder] = useState('');
+  const [instantiateOptions, setOptions] = useState(undefined);
+
   // Handle messages sent from the extension to the webview
   const eventHandler = (event: MessageEvent) => {
     const message = event.data; // The json data that the extension sent
@@ -97,6 +98,10 @@ const App = () => {
     setInitSchemaData(formData);
   }, 2000, { 'trailing': true })
 
+  const handleOnInstantiateOptChange = _.throttle(({ formData }) => {
+    setOptions(formData);
+  }, 2000, { 'trailing': true })
+
   const onDeploy = async (mnemonic: any, wasmBytes?: any) => {
     console.log("Instantiate data: ", initSchemaData);
     if (!initSchemaData) {
@@ -111,7 +116,7 @@ const App = () => {
     try {
       let cosmJs = new CosmJsFactory(window.chainStore.current);
       // let address = await Wasm.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput, label, sourceCode: '' });
-      let address = await cosmJs.current.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, initInput: initSchemaData, label, fees: { amount: gasPrice, denom: gasDenom } });
+      let address = await cosmJs.current.handleDeploy({ mnemonic, wasmBody: wasmBytes ? wasmBytes : wasmBody, source: deploySource, builder: deployBuilder ? deployBuilder : undefined, initInput: initSchemaData, label, gasAmount: { amount: gasPrice, denom: gasDenom }, instantiateOptions });
       console.log("contract address: ", address);
       setContractAddr(address);
       setIsDeployed(true);
@@ -211,6 +216,25 @@ const App = () => {
                   <h4>Gas denom</h4>
                   <Input placeholder="eg. orai" value={gasDenom}
                     onInput={(e: any) => setGasDenom(e.target.value)} />
+                </div>
+                <div className="input-form">
+                  <h4>Source code url</h4>
+                  <Input placeholder="eg. https://foobar.com" value={deploySource}
+                    onInput={(e: any) => setDeploySource(e.target.value)} />
+                </div>
+                <div className="input-form">
+                  <h4>Contract builder (Docker img with tag)</h4>
+                  <Input placeholder="eg. orai/orai:0.40.1" value={deployBuilder}
+                    onInput={(e: any) => setDeployBuilder(e.target.value)} />
+                </div>
+                <div className="input-form">
+                  <Form
+                    schema={instantiateOptionsSchema}
+                    formData={instantiateOptions}
+                    onChange={handleOnInstantiateOptChange}
+                    // onSubmit={(data) => setInitSchemaData(data.formData)}
+                    children={true}
+                  />
                 </div>
               </div>
             </div>

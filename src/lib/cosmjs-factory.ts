@@ -8,7 +8,7 @@ export default class CosmJsFactory {
     private cosmJs: CosmJsAbstract;
 
     constructor(chain: ChainInfoWithExplorer) {
-        if (chain.cosmwasmVersion === "0.16.0") {
+        if (chain.cosmwasmVersion === "0.16.0" || chain.cosmwasmVersion === "1.0.0") {
             this.cosmJs = new CosmJsLatest();
         } else {
             this.cosmJs = new CosmJs();
