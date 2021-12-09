@@ -19,8 +19,7 @@ const getPackagePath = (relativeFile: string): string => {
 
 export const getWasmFile = (packagePath: string): string => {
   return `${packagePath}/artifacts/${path
-    .basename(packagePath)
-    .replace(/-/g, "_")}.wasm`;
+    .basename(packagePath)}.wasm`;
 };
 
 export const getSchemaPath = (packagePath: string): string => {
@@ -188,8 +187,9 @@ const init = async (
           } else {
             let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
             let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
+            console.log("wasm file: ", getWasmFile(packagePath));
             //Deploy & execute case, no need to use command since already have all the wasm & schema file.
-            if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot file wasm file to deploy. Must build the contract first before deploying");
+            if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot find wasm file to deploy. Must build the contract first before deploying");
             const wasmBody = fs.readFileSync(wasmFile).toString("base64");
             // get handle & query json schema
             let mnemonic = "";

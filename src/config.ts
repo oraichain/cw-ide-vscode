@@ -54,6 +54,7 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://testnet.scan.orai.io/txs/${txHash}',
         hdPath: "m/44'/118'/0'/0/0",
+        cosmwasmVersion: '0.13.2'
     },
     {
         rpc: 'https://rpc.orai.io',
@@ -105,6 +106,7 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://scan.orai.io/txs/${txHash}',
         hdPath: "m/44'/118'/0'/0/0",
+        cosmwasmVersion: '0.13.2'
     },
     // {
     //     rpc: 'https://bombay-fcd.terra.dev',
@@ -195,50 +197,51 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
     //     features: ['stargate', 'ibc-transfer', 'cosmwasm'],
     //     explorerUrlToTx: 'https://finder.terra.money/mainnet/tx/{txHash}',
     // },
-    // {
-    //     rpc: 'https://rpc.test.provenance.io',
-    //     rest: 'https://lcd.test.provenance.io',
-    //     chainId: 'pio-testnet-1',
-    //     chainName: 'Proverance Testnet',
-    //     stakeCurrency: {
-    //         coinDenom: 'HASH',
-    //         coinMinimalDenom: 'nhash',
-    //         coinDecimals: 9,
-    //         coinGeckoId: 'hash-token',
-    //         coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
-    //     },
-    //     bip44: {
-    //         coinType: 118,
-    //     },
-    //     bech32Config: Bech32Address.defaultBech32Config('tp'),
-    //     currencies: [
-    //         {
-    //             coinDenom: 'HASH',
-    //             coinMinimalDenom: 'nhash',
-    //             coinDecimals: 9,
-    //             coinGeckoId: 'hash-token',
-    //             coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
-    //         },
-    //         {
-    //             coinDenom: 'HASH',
-    //             coinMinimalDenom: 'nhash',
-    //             coinDecimals: 9,
-    //             coinGeckoId: 'hash-token',
-    //             coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
-    //         },
-    //     ],
-    //     feeCurrencies: [
-    //         {
-    //             coinDenom: 'HASH',
-    //             coinMinimalDenom: 'nhash',
-    //             coinDecimals: 9,
-    //             coinGeckoId: 'hash-token',
-    //             coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
-    //         },
-    //     ],
-    //     features: ['stargate', 'ibc-transfer', 'cosmwasm'],
-    //     explorerUrlToTx: 'https://explorer.test.provenance.io/tx/{txHash}',
-    // },
+    {
+        rpc: 'https://rpc.test.provenance.io',
+        rest: 'https://lcd.test.provenance.io',
+        chainId: 'pio-testnet-1',
+        chainName: 'Proverance Testnet',
+        stakeCurrency: {
+            coinDenom: 'HASH',
+            coinMinimalDenom: 'nhash',
+            coinDecimals: 9,
+            coinGeckoId: 'hash-token',
+            coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
+        },
+        bip44: {
+            coinType: 118,
+        },
+        bech32Config: Bech32Address.defaultBech32Config('tp'),
+        currencies: [
+            {
+                coinDenom: 'HASH',
+                coinMinimalDenom: 'nhash',
+                coinDecimals: 9,
+                coinGeckoId: 'hash-token',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
+            },
+            {
+                coinDenom: 'HASH',
+                coinMinimalDenom: 'nhash',
+                coinDecimals: 9,
+                coinGeckoId: 'hash-token',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
+            },
+        ],
+        feeCurrencies: [
+            {
+                coinDenom: 'HASH',
+                coinMinimalDenom: 'nhash',
+                coinDecimals: 9,
+                coinGeckoId: 'hash-token',
+                coinImageUrl: window.location.origin + '/public/assets/tokens/terra.png',
+            },
+        ],
+        features: ['stargate', 'ibc-transfer', 'cosmwasm'],
+        explorerUrlToTx: 'https://explorer.test.provenance.io/tx/{txHash}',
+        cosmwasmVersion: '0.16.0'
+    },
     {
         rpc: 'https://rpc-stargateworld.fetch.ai',
         rest: 'https://rest-stargateworld.fetch.ai',
@@ -283,6 +286,7 @@ export const EmbedChainInfos: ChainInfoWithExplorer[] = [
         features: ['stargate', 'ibc-transfer', 'cosmwasm'],
         explorerUrlToTx: 'https://explore-stargateworld.fetch.ai/transactions/{txHash}',
         hdPath: "m/44'/118'/0'/0/0",
+        cosmwasmVersion: '0.14.0'
     },
     // {
     //     rpc: 'https://rpc-regen.keplr.app',

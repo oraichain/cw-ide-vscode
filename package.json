@@ -3,7 +3,7 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.27",
+  "version": "0.13.28",
   "publisher": "oraichain",
   "homepage": ".",
   "license": "MIT OR Apache-2.0",
@@ -67,6 +67,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@cosmjs/cosmwasm-stargate": "0.25.0",
+    "@cosmjs/cosmwasm-stargate-1.0": "npm:@cosmjs/cosmwasm-stargate@0.27.0",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/math": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
