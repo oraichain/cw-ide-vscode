@@ -8,10 +8,11 @@ import { ReactComponent as IconSelect } from './assets/icons/code.svg';
 import { ReactComponent as IconChain } from './assets/icons/chain.svg';
 import { LoadingOutlined } from '@ant-design/icons';
 import _ from "lodash";
-import { CustomForm } from "./components";
+import { CustomForm, CustomInput } from "./components";
 import ReactJson from 'react-json-view';
 import CosmJsFactory from "./lib/cosmjs-factory";
 import instantiateOptionsSchema from "./types/schema/instantiate-options";
+import { AdvancedInteraction } from "./pages";
 
 const antIcon = (
   <LoadingOutlined style={{ fontSize: 24, color: "#7954FF" }} spin />
@@ -199,34 +200,11 @@ const App = () => {
               </div>
               <div className="wrap-form">
                 <span className="please-text">Please fill out the form below to deploy the contract:</span>
-                <div className="input-form">
-                  <h4>input label</h4>
-                  <Input
-                    placeholder="eg. random text"
-                    value={label}
-                    onInput={(e: any) => setLabel(e.target.value)}
-                  />
-                </div>
-                <div className="input-form">
-                  <h4>Gas price</h4>
-                  <Input placeholder="eg. 0.0025" value={gasPrice}
-                    onInput={(e: any) => setGasPrice(e.target.value)} />
-                </div>
-                <div className="input-form">
-                  <h4>Gas denom</h4>
-                  <Input placeholder="eg. orai" value={gasDenom}
-                    onInput={(e: any) => setGasDenom(e.target.value)} />
-                </div>
-                <div className="input-form">
-                  <h4>Source code url</h4>
-                  <Input placeholder="eg. https://foobar.com" value={deploySource}
-                    onInput={(e: any) => setDeploySource(e.target.value)} />
-                </div>
-                <div className="input-form">
-                  <h4>Contract builder (Docker img with tag)</h4>
-                  <Input placeholder="eg. orai/orai:0.40.1" value={deployBuilder}
-                    onInput={(e: any) => setDeployBuilder(e.target.value)} />
-                </div>
+                <CustomInput inputHeader="input label" input={label} setInput={setLabel} />
+                <CustomInput inputHeader="Gas price" input={gasPrice} setInput={setGasPrice} placeholder="eg. 0.0025" />
+                <CustomInput inputHeader="Gas denom" input={gasDenom} setInput={setGasDenom} placeholder="eg. orai" />
+                <CustomInput inputHeader="Source code url" input={deploySource} setInput={setDeploySource} placeholder="eg. https://foobar.com" />
+                <CustomInput inputHeader="Contract builder (Docker img with tag)" input={deployBuilder} setInput={setDeployBuilder} placeholder="eg. orai/orai:0.40.1" />
                 <div className="input-form">
                   <Form
                     schema={instantiateOptionsSchema}
@@ -274,16 +252,8 @@ const App = () => {
             <span>Contract Execute </span>
           </div>
           <div className="wrap-form">
-            <div className="input-form">
-              <h4>Gas price</h4>
-              <Input placeholder="eg. 0.0025" value={gasPrice}
-                onInput={(e: any) => setGasPrice(e.target.value)} />
-            </div>
-            <div className="input-form">
-              <h4>Gas denom</h4>
-              <Input placeholder="eg. orai" value={gasDenom}
-                onInput={(e: any) => setGasDenom(e.target.value)} />
-            </div>
+            <CustomInput inputHeader="Gas price" input={gasPrice} setInput={setGasPrice} placeholder="eg. 0.0025" />
+            <CustomInput inputHeader="Gas denom" input={gasDenom} setInput={setGasDenom} placeholder="eg. orai" />
           </div>
           <CustomForm schema={handleSchema} onSubmit={(data) => onHandle(data)} />
           <div className="app-divider" />
@@ -314,9 +284,7 @@ const App = () => {
         </div>
       )}
       {!isBuilt && !isDeployed && !isLoading && !errorMessage && (
-        <div className="intro">
-          Start the Wasm smart contract development journey with CosmWasm IDE by building your first contract! Choose a smart contract file and click the button 'Build CosmWasm' to build your contract.
-        </div>
+        <AdvancedInteraction />
       )}
     </div>
   );
