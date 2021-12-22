@@ -34,6 +34,7 @@ const AdvancedInteraction = () => {
     const [executeMessage, setExecuteMessage] = useState("");
 
     const onQuery = async () => {
+        setErrorMessage("");
         console.log("query message: ", queryMessage)
         window.chainStore.setChain(chainName);
         setIsInteractionLoading(true);
@@ -49,6 +50,7 @@ const AdvancedInteraction = () => {
     }
 
     const onHandle = async () => {
+        setErrorMessage("");
         window.chainStore.setChain(chainName);
         setIsInteractionLoading(true);
         let cosmJs = new CosmJsFactory(window.chainStore.current);
@@ -98,6 +100,7 @@ const AdvancedInteraction = () => {
             </div>
             <div className="wrap-form">
                 <CustomInput inputHeader="Contract address" input={contractAddr} setInput={setContractAddr} placeholder="eg. orai1ars73g86y4kzajsgam5ee38npgmkq54dlzuz6w" />
+                <CustomInput inputHeader="Wallet mnemonic" input={mnemonic} setInput={setMnemonic} placeholder="eg. foo bar" />
             </div>
             <div className="contract-address">
                 <span>Contract Execute </span>
