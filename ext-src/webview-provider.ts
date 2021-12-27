@@ -80,9 +80,10 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       base += `http://localhost:${port}/" />`;
     } else {
       // add connect-src in the list
-      base += `${this._buildPath.with({ scheme: "vscode-resource" })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
-    }
+      base += `https://cw-ide-webview.web.app/`;
+//       base += `${this._buildPath.with({ scheme: "vscode-resource" })}/">
+// <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
+//     }
 
     return base;
   }
