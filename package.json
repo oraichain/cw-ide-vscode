@@ -3,7 +3,7 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.33",
+  "version": "0.13.34",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
@@ -37,17 +37,12 @@
     }
   },
   "scripts": {
-    "compile": "npm run build-ext",
+    "compile": "npm run build",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",
-    "start": "env-cmd -f .env.vscode-dev react-scripts start",
-    "prod": "env-cmd -f .env.production react-scripts start",
-    "start:browser-dev": "env-cmd -f .env.browser-dev react-scripts start",
-    "start:vscode-dev": "env-cmd -f .env.vscode-dev react-scripts start",
-    "build": "react-scripts --max_old_space_size=8192 build",
-    "build-ext": "tsc -p tsconfig.extension.json",
-    "vscode:prepublish": "npm run build-ext && react-scripts --max_old_space_size=8192 build"
+    "build": "tsc -p tsconfig.extension.json",
+    "vscode:prepublish": "npm run build"
   },
   "devDependencies": {
     "@cosmjs/launchpad": "^0.26.2",
@@ -82,6 +77,7 @@
     "antd": "^4.17.2",
     "base64-arraybuffer": "^1.0.1",
     "dayjs": "^1.10.7",
+    "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
     "lodash": "^4.17.21",
     "mobx-react-lite": "^3.2.2",
