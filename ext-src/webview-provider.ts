@@ -10,11 +10,13 @@ import constants from './constants';
 export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'cosmwasm.interactView';
   private _buildPath: vscode.Uri;
+  private _rootPath: vscode.Uri;
   private _isDev: boolean;
   private _view?: vscode.WebviewView;
   constructor(context: vscode.ExtensionContext) {
     this._isDev = context.extensionMode === vscode.ExtensionMode.Development;
     this._buildPath = vscode.Uri.joinPath(context.extensionUri, 'build');
+    this._rootPath = context.extensionUri;
   }
 
   public resolveWebviewView(
@@ -84,7 +86,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       base += `http://localhost:${port}/" />`;
     } else {
       const envText = await vscode.workspace.fs.readFile(
-        vscode.Uri.joinPath(this._buildPath, '..', '.env')
+        vscode.Uri.joinPath(this._rootPath, '.env')
       );
       const isVscode = envText.toString().split('=')[1];
       // add connect-src in the list
