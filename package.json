@@ -3,9 +3,9 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.34",
+  "version": "0.13.35",
   "publisher": "oraichain",
-  "homepage": "https://cw-ide-webview.web.app",
+  "homepage": "https://cw-ide-webview.web.app/",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
