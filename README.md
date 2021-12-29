@@ -83,9 +83,14 @@ Please append the network information into the [config file](https://github.com/
 
 ## Deploy to vscode marketplace
 
+Deploying to vscode marketplace is a bit tricky. The webview of the extension has been moved to a [different repository](https://github.com/oraichain/cw-ide-webview). In addition, since vscode cannot use Keplr, it's no use using the website as the iframe's source. Instead, we only need to copy the build/ directory from the webview repository. Next, copy the .env into the out/ directory so the extension can identify the environment it is running on. We then need to change the ```homepage``` in ```package.json``` file to ".". Finally, we publish the extension onto the vscode marketplace. Below are the steps to deploy the extension to the marketplace:
+
 ```sh
-vsce package
+sudo apt-get install jq && mv package.json package-temp.json && jq '.homepage = "."' package-temp.json > package.json
+cp -r ../cw-ide-webview/build ./
+cp .env.vscode-dev .env
 vsce publish --pat $AUTHORIZATION
+mv package-temp.json package.json
 ```
 
 ## Deploy to Eclipse Open VSX for Gitpod
@@ -93,3 +98,5 @@ vsce publish --pat $AUTHORIZATION
 ```sh
 ovsx publish --pat $AUTHORIZATION
 ```
+
+Currently, the project's github action automatically deploys the extension onto OVSX when merging into the master branch
