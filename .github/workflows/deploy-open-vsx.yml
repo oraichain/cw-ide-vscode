@@ -36,6 +36,8 @@ jobs:
         run: yarn install
       - name: Install ovsx
         run: npm install -g ovsx
+      - name: COPY ENV
+        run: cp .env.browser-dev .env
       - name: Publish to Visual Studio Marketplace
         run: ovsx publish --yarn --pat ${{ secrets.OPEN_VSX_TOKEN }}
         env:
