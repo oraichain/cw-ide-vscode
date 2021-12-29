@@ -3,9 +3,9 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.36",
+  "version": "0.13.38",
   "publisher": "oraichain",
-  "homepage": "https://cw-ide-webview.web.app/",
+  "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
@@ -37,12 +37,13 @@
     }
   },
   "scripts": {
-    "compile": "npm run build",
+    "compile": "npm run build-ext",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",
-    "build": "tsc -p tsconfig.extension.json",
-    "vscode:prepublish": "npm run build"
+    "build-ext": "tsc -p tsconfig.extension.json",
+    "build": "react-scripts --max_old_space_size=8192 build",
+    "vscode:prepublish": "npm run build-ext && react-scripts --max_old_space_size=8192 build"
   },
   "devDependencies": {
     "@cosmjs/launchpad": "^0.26.2",
