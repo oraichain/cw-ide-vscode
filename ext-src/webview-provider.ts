@@ -101,41 +101,29 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 
   private async _getHtmlForWebview(webview: vscode.Webview) {
     // fixed development
-    const entrypoints = this._isDev
-      ? [
-        './static/js/bundle.js',
-        './static/js/vendors~main.chunk.js',
-        './static/js/main.chunk.js'
-      ]
-      : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
-        .entrypoints as string[]);
+    // const entrypoints = this._isDev
+    //   ? [
+    //     './static/js/bundle.js',
+    //     './static/js/vendors~main.chunk.js',
+    //     './static/js/main.chunk.js'
+    //   ]
+    //   : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
+    //     .entrypoints as string[]);
 
-    // Use a nonce to whitelist which scripts can be run
-    const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
-    let jsList = '';
-    // get localhost:port from env if development
-    let cssList = await this._getBaseHtml(webview.cspSource, nonce);
+    // // Use a nonce to whitelist which scripts can be run
+    // const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
+    // let jsList = '';
+    // // get localhost:port from env if development
+    // let cssList = await this._getBaseHtml(webview.cspSource, nonce);
 
-    for (const entrypoint of entrypoints) {
-      if (entrypoint.endsWith('.css')) {
-        cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
-      } else if (entrypoint.endsWith('.js')) {
-        jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
-      }
-    }
+    // for (const entrypoint of entrypoints) {
+    //   if (entrypoint.endsWith('.css')) {
+    //     cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
+    //   } else if (entrypoint.endsWith('.js')) {
+    //     jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
+    //   }
+    // }
 
-    webview.html = `<!DOCTYPE html>
-<html lang="en">
-<head>                  
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
-    <title>CosmWasm Interaction</title>                                    
-    ${cssList}                  
-</head>
-<body>                  
-    <div id="root"></div>                            
-    ${jsList}
-</body>
-</html>`;
+    webview.html = `<iframe frameborder="0" style="position:absolute;width:100%;height:100%;top:0;left:0" src="http://localhost:3000"/>`;
   }
 }
