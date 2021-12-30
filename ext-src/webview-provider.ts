@@ -83,17 +83,8 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       const port = envText.toString().match(/(?<=[^_]PORT=)\d+/)?.[0];
       base += `http://localhost:${port}/" />`;
     } else {
-      const envText = await vscode.workspace.fs.readFile(
-        vscode.Uri.joinPath(this._buildPath, '..', '.env')
-      );
-      const isVscode = envText.toString().split('=')[1];
-      // add connect-src in the list
-      if (isVscode === "true") {
-        base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
-      } else {
-        base += `https://cw-ide-webview.web.app/" />`;
-      }
+      base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app ;">`;
     }
 
     return base;
@@ -101,29 +92,40 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 
   private async _getHtmlForWebview(webview: vscode.Webview) {
     // fixed development
-    // const entrypoints = this._isDev
-    //   ? [
-    //     './static/js/bundle.js',
-    //     './static/js/vendors~main.chunk.js',
-    //     './static/js/main.chunk.js'
-    //   ]
-    //   : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
-    //     .entrypoints as string[]);
+    const entrypoints = this._isDev
+      ? [
+        './static/js/bundle.js',
+        './static/js/vendors~main.chunk.js',
+        './static/js/main.chunk.js'
+      ]
+      : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
+        .entrypoints as string[]);
 
-    // // Use a nonce to whitelist which scripts can be run
-    // const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
-    // let jsList = '';
-    // // get localhost:port from env if development
-    // let cssList = await this._getBaseHtml(webview.cspSource, nonce);
+    // Use a nonce to whitelist which scripts can be run
+    const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
+    let jsList = '';
+    // get localhost:port from env if development
+    let cssList = await this._getBaseHtml(webview.cspSource, nonce);
 
-    // for (const entrypoint of entrypoints) {
-    //   if (entrypoint.endsWith('.css')) {
-    //     cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
-    //   } else if (entrypoint.endsWith('.js')) {
-    //     jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
-    //   }
-    // }
-
-    webview.html = `<iframe frameborder="0" style="position:absolute;width:100%;height:100%;top:0;left:0" src="http://localhost:3000"/>`;
+    for (const entrypoint of entrypoints) {
+      if (entrypoint.endsWith('.css')) {
+        cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
+      } else if (entrypoint.endsWith('.js')) {
+        jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
+      }
+    }
+    webview.html = `<!DOCTYPE html>
+<html lang="en">
+<head>                  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
+    <title>CosmWasm Interaction</title>                                    
+    ${cssList}                  
+</head>
+<body>                  
+    <div id="root"></div>                            
+    ${jsList}
+</body>
+</html>`;
   }
 }
