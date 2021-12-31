@@ -15,35 +15,6 @@ declare global {
 
   function acquireVsCodeApi(): VSCode;
 
-  type ExecuteOptions = {
-    gas?: number;
-    fees?: number;
-    funds?: string;
-    memo?: string;
-    mode?: string;
-  };
-
-  type ExecuteKeplrOptions = {
-    accountNumber: Long | null;
-    sequence: number;
-    gas: number;
-    fees: number;
-    mode?: string;
-  };
-
-  type StatusCode = {
-    SUCCESS: number;
-    NOT_FOUND: number;
-    GENERIC_ERROR: number;
-  };
-
-  type keplrType = keplr;
-  interface Window {
-    chainStore: ChainStore,
-    Keplr: Keplr;
-    keplr: keplr;
-  }
-
   declare const APP_SETTINGS: Record<string, any>;
 }
 

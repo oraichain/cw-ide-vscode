@@ -1,8 +1,0 @@
-{
-	"folders": [
-		{
-			"uri": "vscode-remote://172.17.0.1:5050/home/orai/oraiwasm"
-		}
-	],
-	"remoteAuthority": "172.17.0.1:5050"
-}
