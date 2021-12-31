@@ -38,10 +38,7 @@ const App = () => {
     if (message.action === "deploy") {
       if (isIFrame(frame) && frame.contentWindow) {
         frame.contentWindow.postMessage({
-          action: message.action, payload: message.payload, mnemonic: message.mnemonic, schemaFile: message.handleFile
-        }, '*');
-        frame.contentWindow.postMessage({
-          action: message.action, payload: message.payload, mnemonic: message.mnemonic, schemaFile: message.queryFile
+          action: message.action, payload: message.payload, mnemonic: message.mnemonic, handleFile: message.handleFile, queryFile: message.queryFile
         }, '*');
       }
     }
