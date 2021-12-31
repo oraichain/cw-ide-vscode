@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
-import logo from "./logo.png";
+import { useEffect } from "react";
 // import Form from "@rjsf/core";
-import Form from '@rjsf/antd';
-import './themes/style.scss';
-import { Input, Select, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
-import _ from "lodash";
 
 let vscode: VSCode;
 
