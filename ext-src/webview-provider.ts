@@ -83,17 +83,8 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       const port = envText.toString().match(/(?<=[^_]PORT=)\d+/)?.[0];
       base += `http://localhost:${port}/" />`;
     } else {
-      const envText = await vscode.workspace.fs.readFile(
-        vscode.Uri.joinPath(this._buildPath, '..', '.env')
-      );
-      const isVscode = envText.toString().split('=')[1];
-      // add connect-src in the list
-      if (isVscode === "true") {
-        base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
-      } else {
-        base += `https://cw-ide-webview.web.app/" />`;
-      }
+      base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app ;">`;
     }
 
     return base;
@@ -123,7 +114,6 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
         jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
       }
     }
-
     webview.html = `<!DOCTYPE html>
 <html lang="en">
 <head>                  

@@ -3,7 +3,7 @@
   "displayName": "VsCode CosmWasm",
   "description": "CosmWasm build & optimize",
   "icon": "logo-128.png",
-  "version": "0.13.39",
+  "version": "0.13.40",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
@@ -38,6 +38,7 @@
   },
   "scripts": {
     "compile": "npm run build-ext",
+    "start": "react-scripts start",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",
@@ -47,7 +48,7 @@
   },
   "devDependencies": {
     "@cosmjs/launchpad": "^0.26.2",
-    "@cosmjs/proto-signing": "^0.26.0",
+    "@cosmjs/proto-signing": "^0.26.5",
     "@types/mocha": "^9.0.0",
     "@types/node": "^12.12.0",
     "@types/react": "^17.0.19",
