@@ -47,8 +47,6 @@
     "vscode:prepublish": "npm run build-ext && react-scripts --max_old_space_size=8192 build"
   },
   "devDependencies": {
-    "@cosmjs/launchpad": "^0.26.2",
-    "@cosmjs/proto-signing": "^0.26.5",
     "@types/mocha": "^9.0.0",
     "@types/node": "^12.12.0",
     "@types/react": "^17.0.19",
@@ -62,32 +60,9 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
-    "@cosmjs/cosmwasm-stargate": "0.25.0",
-    "@cosmjs/cosmwasm-stargate-1.0": "npm:@cosmjs/cosmwasm-stargate@0.27.0",
-    "@cosmjs/crypto": "^0.26.5",
-    "@cosmjs/math": "^0.26.5",
-    "@cosmjs/proto-signing": "^0.26.5",
-    "@cosmjs/stargate": "^0.26.5",
-    "@keplr-wallet/cosmos": "^0.9.6",
-    "@keplr-wallet/stores": "^0.9.6",
-    "@keplr-wallet/types": "^0.9.6",
-    "@oraichain/cosmosjs": "^0.0.75",
-    "@rjsf/antd": "^3.2.1",
-    "@rjsf/core": "^3.2.1",
-    "@types/lodash": "^4.14.177",
-    "antd": "^4.17.2",
-    "base64-arraybuffer": "^1.0.1",
-    "dayjs": "^1.10.7",
-    "dotenv": "^10.0.0",
-    "env-cmd": "^10.1.0",
-    "lodash": "^4.17.21",
-    "mobx-react-lite": "^3.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-json-view": "^1.21.3",
-    "sass": "^1.43.2",
-    "shelljs": "^0.8.4"
+    "react-json-view": "^1.21.3"
   },
   "eslintConfig": {
     "extends": [
