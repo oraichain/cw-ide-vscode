@@ -1,4 +1,4 @@
-# Welcome to CosmWasm VS Code Extension
+# Welcome to CosmWasm IDE Extension
 
 <p align="center">
   <a target="_blank" rel="noopener noreferrer"><img width="100" src="https://raw.githubusercontent.com/oraichain/vscode-cosmwasm/docs/contributing/public/cosmos-ide.png" alt="CosmWasm IDE logo"></a> &nbsp
@@ -9,13 +9,13 @@
     CosmosWasm IDE - An open-source project for CosmWasm smart contract developers  
 </h1>
 
-## cosmWasm-optimize
+## CosmWasm IDE Optimization
 
 This is a bash script with a locked set of dependencies to produce
 reproducible builds of cosmwasm smart contracts. It also does heavy
 optimization on the build size, using binary stripping and `wasm-opt`.
 
-## cosmwasm-vscode interface
+## CosmWasm IDE Extension Interface
 
 The extension provides two custom VS Code buttons: ```Build CosmWasm```,  ```Deploy Cosmwasm``` under the status bar of Vs Code and a ```CosmWasm IDE Explorer``` under the ```Explorer``` tab of VS Code. The ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code. Meanwhile, the ```Deploy Cosmwasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
 
@@ -81,23 +81,9 @@ At the moment, you need to create a PR submitting your network information. Afte
 
 Please append the network information into the [config file](https://github.com/oraichain/vscode-cosmwasm/blob/master/src/config.ts).
 
-## Deploy to vscode marketplace
+## Deploy to Vscode marketplace
 
-Deploying to vscode marketplace is a bit tricky. The webview of the extension has been moved to a [different repository](https://github.com/oraichain/cw-ide-webview). In addition, since vscode cannot use Keplr, it's no use using the website as the iframe's source. Instead:
-
-- We only need to copy the build/ directory from the webview repository. 
-- Next, create the .env from the .env.vscode-dev to  
-- We then need to change the ```homepage``` in ```package.json``` file to ".". 
-- Finally, we publish the extension onto the vscode marketplace. 
-
-Below are the steps to deploy the extension to the marketplace assuming that you are at the root directory of the repository, and the repo is in the same parent directory as the [CW IDE Webview](https://github.com/oraichain/cw-ide-webview):
-
-```sh
-sudo apt-get install jq && mv package.json package-temp.json && jq '.homepage = "."' package-temp.json > package.json
-cp -r ../cw-ide-webview/build ./
-cp .env.vscode-dev .env
 vsce publish --pat $AUTHORIZATION
-mv package-temp.json package.json
 ```
 
 ## Deploy to Eclipse Open VSX for Gitpod
@@ -105,5 +91,3 @@ mv package-temp.json package.json
 ```sh
 ovsx publish --pat $AUTHORIZATION
 ```
-
-Currently, the project's github action automatically deploys the extension onto OVSX when merging into the master branch
