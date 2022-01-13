@@ -203,7 +203,7 @@ const init = async (
             // get handle & query json schema
             let mnemonic = "";
             try {
-              mnemonic = fs.readFileSync(vscode.Uri.joinPath(vars.workspaceFolder, '.env')).toString('ascii');
+              mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
               errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
