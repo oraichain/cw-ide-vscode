@@ -1,15 +1,15 @@
 {
-  "name": "cosmwasm",
-  "displayName": "VsCode CosmWasm",
-  "description": "CosmWasm build & optimize",
+  "name": "cosmwasm-ide",
+  "displayName": "CosmWasm IDE",
+  "description": "CosmWasm IDE for developers to build & optimize CosmWasm smart contracts",
   "icon": "logo-128.png",
-  "version": "0.13.40",
+  "version": "0.13.41",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oraichain/vscode-cosmwasm.git"
+    "url": "https://github.com/oraichain/cw-vscode.git"
   },
   "engines": {
     "vscode": "^1.53.0"
@@ -38,7 +38,7 @@
   },
   "scripts": {
     "compile": "npm run build-ext",
-    "start": "react-scripts start",
+    "start": "NODE_ENV=production react-scripts start",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p tsconfig.extension.json",
     "test": "node ./node_modules/vscode/bin/test",

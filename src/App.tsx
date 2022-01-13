@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // import Form from "@rjsf/core";
 
 let vscode: VSCode;
 
 const App = () => {
+
+  const [frameSrc, setFrameSrc] = useState("https://cw-ide-webview.web.app/");
 
   const isIFrame = (input: HTMLElement | null): input is HTMLIFrameElement =>
     input !== null && input.tagName === 'IFRAME';
@@ -36,6 +38,11 @@ const App = () => {
         }, '*');
       }
     }
+    // toggle development mode & production mode webview
+    if (message.action === "dev-mode") {
+      if (frameSrc === "http://localhost:3000/") setFrameSrc("https://cw-ide-webview.web.app/");
+      else setFrameSrc("http://localhost:3000/");
+    }
   };
   useEffect(() => {
     console.log("in use effect");
@@ -46,7 +53,7 @@ const App = () => {
   });
 
   return (
-    <iframe id="ide" src="https://cw-ide-webview.web.app/" frameBorder="0" style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, visibility: "visible" }} />
+    <iframe id="ide" src={frameSrc} frameBorder="0" style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, visibility: "visible" }} />
   )
 };
 

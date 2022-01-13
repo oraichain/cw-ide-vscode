@@ -64,6 +64,9 @@ const init = async (
     );
   }
 
+  // check current development mode to notify users
+  let count = 0;
+
   const config = {
     commands: [
       {
@@ -76,6 +79,12 @@ const init = async (
       {
         id: constants.DEPLOY,
         name: "$(vm) Deploy CosmWasm",
+        color: "#ffffff",
+        singleInstance: true,
+      },
+      {
+        id: constants.DEV_MODE,
+        name: "$(wrench) Toggle Development Mode",
         color: "#ffffff",
         singleInstance: true,
       },
@@ -166,7 +175,7 @@ const init = async (
             execPath: process.execPath,
           };
 
-          if (id === "build") {
+          if (id === constants.BUILD) {
             const actionCommand = interpolateString(command, vars);
             console.log("action command: ", actionCommand);
             infoMessage("Your contract is being built ...");
@@ -184,7 +193,7 @@ const init = async (
               });
               infoMessage("Your contract has been successfully built!");
             });
-          } else {
+          } else if (id === constants.DEPLOY) {
             let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
             let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
             console.log("wasm file: ", getWasmFile(packagePath));
@@ -194,11 +203,17 @@ const init = async (
             // get handle & query json schema
             let mnemonic = "";
             try {
-              mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
+              mnemonic = fs.readFileSync(vscode.Uri.joinPath(vars.workspaceFolder, '.env')).toString('ascii');
             } catch (error) {
               errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
             provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
+          } else if (id === constants.DEV_MODE) {
+            count++;
+            // default is 0, which is production mode. increase by one to change to dev mode which is an odd number. increase again will change to prod mode, an even num
+            if (count % 2 !== 0) infoMessage("Changing to development mode with host: http://localhost:3000/");
+            else infoMessage("Changing to production mode with host: https://cw-ide-webview.web.app/");
+            provider.setActionWithPayload({ action: id });
           }
         });
 
