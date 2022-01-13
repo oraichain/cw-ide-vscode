@@ -119,7 +119,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 <head>                  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">                  
-    <title>CosmWasm Interaction</title>                                    
+    <title>CosmWasm IDE</title>                                    
     ${cssList}                  
 </head>
 <body>                  
