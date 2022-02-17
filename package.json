@@ -3,7 +3,7 @@
   "displayName": "CosmWasm IDE",
   "description": "CosmWasm IDE for developers to build & optimize CosmWasm smart contracts",
   "icon": "logo-128.png",
-  "version": "0.13.45",
+  "version": "0.13.46",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
@@ -22,8 +22,17 @@
   ],
   "main": "./out/ext-src/extension",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cosmwasm-ide",
+          "title": "CosmWasm IDE",
+          "icon": "logo-128.png"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "cosmwasm-ide": [
         {
           "type": "webview",
           "id": "cosmwasm.interactView",
