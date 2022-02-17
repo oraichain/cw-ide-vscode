@@ -65,7 +65,7 @@ const init = async (
   }
 
   // check current development mode to notify users
-  let count = 0;
+  // let count = 0;
 
   const config = {
     commands: [
@@ -82,12 +82,12 @@ const init = async (
         color: "#ffffff",
         singleInstance: true,
       },
-      {
-        id: constants.DEV_MODE,
-        name: "$(wrench) Toggle Development Mode",
-        color: "#ffffff",
-        singleInstance: true,
-      },
+      // {
+      //   id: constants.DEV_MODE,
+      //   name: "$(wrench) Toggle Development Mode",
+      //   color: "#ffffff",
+      //   singleInstance: true,
+      // },
     ],
   };
 
@@ -208,13 +208,14 @@ const init = async (
               errorMessage("No .env file with mnemonic stored in the current workspace folder");
             }
             provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
-          } else if (id === constants.DEV_MODE) {
-            count++;
-            // default is 0, which is production mode. increase by one to change to dev mode which is an odd number. increase again will change to prod mode, an even num
-            if (count % 2 !== 0) infoMessage("Changing to development mode with host: http://localhost:3000/");
-            else infoMessage("Changing to production mode with host: https://cw-ide-webview.web.app/");
-            provider.setActionWithPayload({ action: id });
           }
+          // } else if (id === constants.DEV_MODE) {
+          //   count++;
+          //   // default is 0, which is production mode. increase by one to change to dev mode which is an odd number. increase again will change to prod mode, an even num
+          //   if (count % 2 !== 0) infoMessage("Changing to development mode with host: http://localhost:3000/");
+          //   else infoMessage("Changing to production mode with host: https://cw-ide-webview.web.app/");
+          //   provider.setActionWithPayload({ action: id });
+          // }
         });
 
         context.subscriptions.push(disposable);
