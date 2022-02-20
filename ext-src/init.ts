@@ -205,7 +205,7 @@ const init = async (
             try {
               mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
-              errorMessage("No .env file with mnemonic stored in the current workspace folder");
+              warningMessage("No .env file with mnemonic stored in the current workspace folder");
             }
             provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
           }
@@ -262,6 +262,10 @@ function checkSchemaExist(schemaPath: string): boolean {
 
 function errorMessage(msg: string) {
   vscode.window.showErrorMessage(msg)
+}
+
+function warningMessage(msg: string) {
+  vscode.window.showWarningMessage(msg)
 }
 
 function infoMessage(msg: string) {
