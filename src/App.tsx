@@ -46,8 +46,8 @@ const App = () => {
   });
 
   return (
-    <iframe id="ide" src={"https://cw-ide-webview.web.app/"} frameBorder="0" style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, visibility: "visible" }} />
-  )
+    <div></div>
+  );
 };
 
 export default App;
