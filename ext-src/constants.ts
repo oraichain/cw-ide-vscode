@@ -1,7 +1,9 @@
 const constants = {
     BUILD: "build",
     DEPLOY: "deploy",
-    DEV_MODE: "dev-mode",
+    UPLOAD: "upload",
+    INSTANTIATE: "instantiate",
+    // DEV_MODE: "dev-mode",
     INIT_SCHEMA: "init_msg",
     HANDLE_SCHEMA: {
         OLD_VERSION: "handle_msg",

@@ -82,6 +82,18 @@ const init = async (
         color: "#ffffff",
         singleInstance: true,
       },
+      {
+        id: constants.UPLOAD,
+        name: "$(vm) Upload CosmWasm",
+        color: "#ffffff",
+        singleInstance: true,
+      },
+      {
+        id: constants.INSTANTIATE,
+        name: "$(vm) Instantiate CosmWasm",
+        color: "#ffffff",
+        singleInstance: true,
+      },
       // {
       //   id: constants.DEV_MODE,
       //   name: "$(wrench) Toggle Development Mode",
@@ -182,32 +194,39 @@ const init = async (
             cp.exec(actionCommand, { cwd: vars.cwd }, (error, stdout, stderr) => {
               if (error) return errorMessage(stderr);
               // send post wasm body when build & schema file path
-              let schemaPath = getSchemaPath(packagePath);
-              let schemaFile = `${schemaPath}/init_msg.json`;
-              if (!checkSchemaExist(`${schemaPath}/init_msg.json`)) {
-                if (!checkSchemaExist(`${schemaPath}/instantiate_msg.json`)) return errorMessage("Cannot collect init json schema");
-                else schemaFile = `${schemaPath}/instantiate_msg.json`;
-              }
+              const schemaFile = getInstantiateSchema(packagePath);
               provider.setActionWithPayload({
-                action: id, payload: null, schemaFile: fs.readFileSync(`${schemaFile}`).toString('ascii')
+                action: id, payload: null, schemaFile
               });
               infoMessage("Your contract has been successfully built!");
             });
-          } else if (id === constants.DEPLOY) {
-            let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
-            let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
-            console.log("wasm file: ", getWasmFile(packagePath));
-            //Deploy & execute case, no need to use command since already have all the wasm & schema file.
-            if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot find wasm file to deploy. Must build the contract first before deploying");
-            const wasmBody = fs.readFileSync(wasmFile).toString("base64");
-            // get handle & query json schema
+          } else {
             let mnemonic = "";
             try {
               mnemonic = fs.readFileSync(`${vars.workspaceFolder}/.env`).toString('ascii');
             } catch (error) {
               warningMessage("No .env file with mnemonic stored in the current workspace folder");
             }
-            provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
+            if (id === constants.DEPLOY) {
+              let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
+              let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
+              console.log("wasm file: ", getWasmFile(packagePath));
+              //Deploy & execute case, no need to use command since already have all the wasm & schema file.
+              if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot find wasm file to deploy. Must build the contract first before deploying");
+              const wasmBody = fs.readFileSync(wasmFile).toString("base64");
+              // get handle & query json schema
+              provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, handleFile, queryFile });
+            } else if (id === constants.UPLOAD) {
+              // only send wasm body
+              if (!fs.existsSync(getWasmFile(packagePath))) return errorMessage("Cannot find wasm file to deploy. Must build the contract first before deploying");
+              const wasmBody = fs.readFileSync(wasmFile).toString("base64");
+              const schemaFile = getInstantiateSchema(packagePath);
+              provider.setActionWithPayload({ action: id, payload: wasmBody, mnemonic, schemaFile });
+            } else if (id === constants.INSTANTIATE) {
+              let handleFile = await readFiles(getSchemaPath(packagePath), constants.HANDLE_SCHEMA);
+              let queryFile = await readFiles(getSchemaPath(packagePath), constants.QUERY_SCHEMA);
+              provider.setActionWithPayload({ action: id, mnemonic, handleFile, queryFile });
+            }
           }
           // } else if (id === constants.DEV_MODE) {
           //   count++;
@@ -233,6 +252,16 @@ const init = async (
     );
   }
 };
+
+function getInstantiateSchema(packagePath) {
+  let schemaPath = getSchemaPath(packagePath);
+  let schemaFile = `${schemaPath}/init_msg.json`;
+  if (!checkSchemaExist(`${schemaPath}/init_msg.json`)) {
+    if (!checkSchemaExist(`${schemaPath}/instantiate_msg.json`)) return errorMessage("Cannot collect init json schema");
+    else schemaFile = `${schemaPath}/instantiate_msg.json`;
+  }
+  return fs.readFileSync(`${schemaFile}`).toString('ascii');
+}
 
 function loadButton({ command, name, color, vsCommand }: RunButton) {
   const runButton = vscode.window.createStatusBarItem(1, 0);
