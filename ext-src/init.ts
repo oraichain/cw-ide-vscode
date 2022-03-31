@@ -54,15 +54,6 @@ const init = async (
   // const configuration = vscode.workspace.getConfiguration('cosmwasm');
 
   const buildTool = path.join(context.extensionPath, "ext-src", "optimize.sh");
-  const simulateTool = "cosmwasm-simulate";
-
-  const where = process.platform === "linux" ? "whereis" : "where";
-  const simulatePath = execSync(`${where} ${simulateTool}`).toString();
-  if (simulatePath.indexOf("not found") !== -1) {
-    vscode.window.showWarningMessage(
-      `Please run 'cargo install ${simulateTool}'`
-    );
-  }
 
   // check current development mode to notify users
   // let count = 0;
