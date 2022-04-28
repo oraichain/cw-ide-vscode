@@ -23,7 +23,8 @@ export const getWasmFile = (packagePath: string): string => {
 };
 
 export const getSchemaPath = (packagePath: string): string => {
-  return `${packagePath}/artifacts/schema`;
+  const schemaPath = fs.existsSync(`${packagePath}/artifacts/schema`) ? `${packagePath}/artifacts/schema` : `${packagePath}/schema`;
+  return schemaPath;
 };
 
 const disposables = [];
