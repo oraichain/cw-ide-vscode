@@ -30,10 +30,7 @@ const App = () => {
           "*"
         );
       } else {
-        frame.contentWindow.postMessage(
-          {
-            ...message,
-          },
+        frame.contentWindow.postMessage(message,
           "*"
         );
       }

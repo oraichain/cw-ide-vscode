@@ -197,6 +197,17 @@ const init = async (
               execPath: process.execPath,
             };
 
+            let mnemonic = "";
+            try {
+              mnemonic = fs
+                .readFileSync(`${vars.workspaceFolder}/.env`)
+                .toString("ascii");
+            } catch (error) {
+              infoMessage(
+                "No .env file with mnemonic stored in the current workspace folder"
+              );
+            }
+
             if (id === constants.BUILD) {
               const actionCommand = interpolateString(command, vars);
               console.log("action command: ", actionCommand);
@@ -214,24 +225,12 @@ const init = async (
                     payload: null,
                     schemaFile,
                     migrateSchemaFile,
-                    mnemonic: fs
-                      .readFileSync(`${vars.workspaceFolder}/.env`)
-                      .toString("ascii"),
+                    mnemonic
                   });
                   infoMessage("Your contract has been successfully built!");
                 }
               );
             } else {
-              let mnemonic = "";
-              try {
-                mnemonic = fs
-                  .readFileSync(`${vars.workspaceFolder}/.env`)
-                  .toString("ascii");
-              } catch (error) {
-                warningMessage(
-                  "No .env file with mnemonic stored in the current workspace folder"
-                );
-              }
               if (id === constants.DEPLOY) {
                 let handleFile = await readFiles(
                   getSchemaPath(packagePath),
@@ -298,13 +297,6 @@ const init = async (
                 });
               }
             }
-            // } else if (id === constants.DEV_MODE) {
-            //   count++;
-            //   // default is 0, which is production mode. increase by one to change to dev mode which is an odd number. increase again will change to prod mode, an even num
-            //   if (count % 2 !== 0) infoMessage("Changing to development mode with host: http://localhost:3000/");
-            //   else infoMessage("Changing to production mode with host: https://cw-ide-webview.web.app/");
-            //   provider.setActionWithPayload({ action: id });
-            // }
           }
         );
 
