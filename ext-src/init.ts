@@ -143,25 +143,25 @@ const init = async (
               relativeFile:
                 vscode.window.activeTextEditor && rootPath.path
                   ? path.relative(
-                      rootPath.path,
-                      vscode.window.activeTextEditor.document.fileName
-                    )
+                    rootPath.path,
+                    vscode.window.activeTextEditor.document.fileName
+                  )
                   : null,
 
               // - the current opened file's basename
               fileBasename: vscode.window.activeTextEditor
                 ? path.basename(
-                    vscode.window.activeTextEditor.document.fileName
-                  )
+                  vscode.window.activeTextEditor.document.fileName
+                )
                 : null,
 
               // - the current opened file's basename with no file extension
               fileBasenameNoExtension: vscode.window.activeTextEditor
                 ? path.parse(
-                    path.basename(
-                      vscode.window.activeTextEditor.document.fileName
-                    )
-                  ).name
+                  path.basename(
+                    vscode.window.activeTextEditor.document.fileName
+                  )
+                ).name
                 : null,
 
               // - the current opened file's dirname
@@ -172,10 +172,10 @@ const init = async (
               // - the current opened file's extension
               fileExtname: vscode.window.activeTextEditor
                 ? path.parse(
-                    path.basename(
-                      vscode.window.activeTextEditor.document.fileName
-                    )
-                  ).ext
+                  path.basename(
+                    vscode.window.activeTextEditor.document.fileName
+                  )
+                ).ext
                 : null,
 
               // - the task runner's current working directory on startup
@@ -189,8 +189,8 @@ const init = async (
               // - the current selected text in the active file
               selectedText: vscode.window.activeTextEditor
                 ? vscode.window.activeTextEditor.document.getText(
-                    vscode.window.activeTextEditor.selection
-                  )
+                  vscode.window.activeTextEditor.selection
+                )
                 : null,
 
               // - the path to the running VS Code executable
@@ -214,6 +214,9 @@ const init = async (
                     payload: null,
                     schemaFile,
                     migrateSchemaFile,
+                    mnemonic: fs
+                      .readFileSync(`${vars.workspaceFolder}/.env`)
+                      .toString("ascii"),
                   });
                   infoMessage("Your contract has been successfully built!");
                 }
@@ -238,6 +241,10 @@ const init = async (
                   getSchemaPath(packagePath),
                   constants.QUERY_SCHEMA
                 );
+                let migrateFile = await readFiles(
+                  getSchemaPath(packagePath),
+                  constants.MIGRATE_SCHEMA
+                );
                 console.log("wasm file: ", getWasmFile(packagePath));
                 //Deploy & execute case, no need to use command since already have all the wasm & schema file.
                 if (!fs.existsSync(getWasmFile(packagePath)))
@@ -252,6 +259,7 @@ const init = async (
                   mnemonic,
                   handleFile,
                   queryFile,
+                  migrateFile,
                 });
               } else if (id === constants.UPLOAD) {
                 // only send wasm body
@@ -276,11 +284,17 @@ const init = async (
                   getSchemaPath(packagePath),
                   constants.QUERY_SCHEMA
                 );
+                let migrateFile = await readFiles(
+                  getSchemaPath(packagePath),
+                  constants.MIGRATE_SCHEMA
+                );
+
                 provider.setActionWithPayload({
                   action: id,
                   mnemonic,
                   handleFile,
                   queryFile,
+                  migrateFile,
                 });
               }
             }

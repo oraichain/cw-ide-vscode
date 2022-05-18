@@ -10,6 +10,7 @@ const constants = {
         NEW_VERSION: "execute_msg",
     },
     QUERY_SCHEMA: "query_msg",
+    MIGRATE_SCHEMA: "migrate_msg"
 }
 
 export default constants;
