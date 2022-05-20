@@ -8,6 +8,7 @@ import { CosmWasmViewProvider } from "./webview-provider";
 import constants from "./constants";
 import * as cp from "child_process";
 import * as os from "os";
+import _ from "lodash";
 
 const getPackagePath = (relativeFile: string): string => {
   let packagePath = path.dirname(relativeFile);
@@ -23,10 +24,15 @@ export const getWasmFile = (packagePath: string): string => {
 };
 
 export const getSchemaPath = (packagePath: string): string => {
-  const schemaPath = fs.existsSync(`${packagePath}/artifacts/schema`)
-    ? `${packagePath}/artifacts/schema`
-    : `${packagePath}/schema`;
-  return schemaPath;
+  try {
+    const schemaPath = fs.existsSync(`${packagePath}/artifacts/schema`)
+      ? `${packagePath}/artifacts/schema`
+      : `${packagePath}/schema`;
+    return schemaPath;
+  } catch (error) {
+    console.log("error on get schema path:", error);
+    return null;
+  }
 };
 
 const disposables = [];
@@ -219,7 +225,7 @@ const init = async (
                   if (error) return errorMessage(stderr);
                   // send post wasm body when build & schema file path
                   const schemaFile = getInstantiateSchema(packagePath);
-                  const migrateSchemaFile = getMigrateSchema(packagePath);
+                  const migrateSchemaFile = getMigrateSchema(packagePath) || null;
                   provider.setActionWithPayload({
                     action: id,
                     payload: null,
@@ -243,7 +249,7 @@ const init = async (
                 let migrateFile = await readFiles(
                   getSchemaPath(packagePath),
                   constants.MIGRATE_SCHEMA
-                );
+                ) || null;
                 console.log("wasm file: ", getWasmFile(packagePath));
                 //Deploy & execute case, no need to use command since already have all the wasm & schema file.
                 if (!fs.existsSync(getWasmFile(packagePath)))
@@ -275,26 +281,26 @@ const init = async (
                   schemaFile,
                 });
               } else if (id === constants.INSTANTIATE) {
-                let handleFile = await readFiles(
-                  getSchemaPath(packagePath),
-                  constants.HANDLE_SCHEMA
-                );
-                let queryFile = await readFiles(
-                  getSchemaPath(packagePath),
-                  constants.QUERY_SCHEMA
-                );
-                let migrateFile = await readFiles(
-                  getSchemaPath(packagePath),
-                  constants.MIGRATE_SCHEMA
-                );
+                  let handleFile = await readFiles(
+                    getSchemaPath(packagePath),
+                    constants.HANDLE_SCHEMA
+                  );
+                  let queryFile = await readFiles(
+                    getSchemaPath(packagePath),
+                    constants.QUERY_SCHEMA
+                  );
+                  let migrateFile = await readFiles(
+                    getSchemaPath(packagePath),
+                    constants.MIGRATE_SCHEMA
+                  );
 
-                provider.setActionWithPayload({
-                  action: id,
-                  mnemonic,
-                  handleFile,
-                  queryFile,
-                  migrateFile,
-                });
+                  provider.setActionWithPayload({
+                    action: id,
+                    mnemonic,
+                    handleFile,
+                    queryFile,
+                    migrateFile,
+                  });
               }
             }
           }
@@ -328,12 +334,17 @@ function getInstantiateSchema(packagePath) {
 }
 
 function getMigrateSchema(packagePath) {
-  let schemaPath = getSchemaPath(packagePath);
-  let schemaFile = `${schemaPath}/migrate_msg.json`;
-  if (!checkSchemaExist(`${schemaPath}/migrate_msg.json`)) {
-    schemaFile = `${schemaPath}/migrate_msg.json`;
+  try {
+    let schemaPath = getSchemaPath(packagePath);
+    let schemaFile = `${schemaPath}/migrate_msg.json`;
+    if (!checkSchemaExist(`${schemaPath}/migrate_msg.json`)) {
+      schemaFile = `${schemaPath}/migrate_msg.json`;
+    }
+    return fs.readFileSync(`${schemaFile}`).toString("ascii");
+  } catch (error) {
+    console.log("error getting migrate schema", error);
+    return null;
   }
-  return fs.readFileSync(`${schemaFile}`).toString("ascii");
 }
 
 function loadButton({ command, name, color, vsCommand }: RunButton) {
@@ -380,29 +391,24 @@ function infoMessage(msg: string) {
  * @param fileName - the file name that we want to read the content
  * @returns - a promise which includes the content of the file
  */
-function readFiles(dirname: string, fileName: any): Promise<any> {
+ function readFiles(dirname: string, fileName: any): Promise<any> {
   return new Promise((resolve, reject) => {
     fs.readdir(dirname, function (err, filenames) {
       if (err) {
         reject(err);
       }
-      filenames.forEach(function (filename) {
+      filenames.forEach(function (filename, i, array) {
         if (
           filename.includes(fileName) ||
           filename.includes(fileName.OLD_VERSION) ||
           filename.includes(fileName.NEW_VERSION)
         ) {
-          fs.readFile(
+          const buffer = fs.readFileSync(
             path.join(dirname, filename),
-            "utf-8",
-            function (err, content) {
-              if (err) {
-                reject(err);
-              }
-              // force return here because we dont read two files
-              resolve(content);
-            }
-          );
+            "utf-8");
+          resolve(buffer);
+        } else {
+          if (i === array.length - 1) resolve(null)
         }
       });
     });
