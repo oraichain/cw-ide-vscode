@@ -9,31 +9,15 @@
     CosmosWasm IDE - An open-source project for CosmWasm smart contract developers  
 </h1>
 
-## CosmWasm IDE Optimization
-
-This is a bash script with a locked set of dependencies to produce
-reproducible builds of cosmwasm smart contracts. It also does heavy
-optimization on the build size, using binary stripping and `wasm-opt`.
-
-## CosmWasm IDE Extension Interface
-
-The extension provides three custom VS Code buttons: ```Build CosmWasm```,  ```Deploy Cosmwasm``` & ```Toggle Development Mode``` under the status bar of Vs Code and a ```CosmWasm IDE Explorer``` under the ```Explorer``` tab of VS Code. 
-
-- ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code.
-- ```Deploy Cosmwasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
-- ```Toggle Development Mode``` button will toggle between the production and local [CosmWasm IDE Webview](https://github.com/oraichain/cw-ide-webview.git) (the local webview has a default url: http://localhost:3000/). This allows the frontend & CosmWasm developers to easily customize the extension UI, adding new testnets for the development purposes & so on without cloning this repository.
-
-The CosmWasm IDE Explorer helps you modify the destination network that you want to interact with, and you can use it to interact with the smart contract you deploy with corresponding execute and query actions.
-
-## Quick tutorial
+## 1. Setting up the CosmWasm development environment
 
 ### Gitpod users
 
-The fastest way to start developing & deploying a CosmWasm smart contract is to use Gitpod, a tool that automates the environment installation process. For more information, please click [Here](https://github.com/oraichain/cosmwasm-gitpod/blob/master/README.md).
+To setup your workspace with all the neccessary tools & libraries for developing the CosmWasm smart contracts, please click button ```Open in Gitpod``` below. Gitpod will automatically install everything you need to deploy a smart contract.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/oraichain/cosmwasm-gitpod)
 
 ### Local development users
-
-#### 1. Setting up the environment
 
 For those who want to develop the contracts locally, it's best to use Docker to automatically install all the libraries & tools for you.
 
@@ -51,25 +35,52 @@ services:
 
 Please note that the workspace that you run the container on should has a Cargo.toml file under its workspace root directory. Otherwise, the CosmWasm IDE will not display its interface to prevent unexpected errors.
 
-#### 2. Install the CosmWasm IDE extension
+## 2. Install the CosmWasm IDE extension (for local development users only)
 
 You should navigate to the **Extensions** tab in the VS Code tab bar & install the CosmWasm IDE extension. After installing, it should show a new IDE button in the tab bar, as well as several buttons under the Status Bar of VSCode.
 
-#### 3. Build & deploy a contract
+## 3. Build & deploy a contract
 
-Since you are developing locally, you need a wallet to deploy & interact with the contract. Hence, you need to create a **.env** file under the workspace root, and insert your test wallet mnemonic. 
+- Since you are developing locally, you need a wallet to deploy & interact with the contract. Hence, you need to create a **.env** file under the workspace root, and insert your test wallet mnemonic. 
 
-Next, you can choose a file in the src/ directory of your contract then click **Build CosmWasm**. Building a contract the first time will take quite a bit, so please wait for it to finish building. The CosmWasm IDE webview should update its UI, which moves to a new screen so that you can type neccessary inputs to deploy the contract.
+- Next, choose an arbitrary file in the project.
 
-Finally, you can click **Upload/Instantiate/Deploy CosmWasm**.
+<p align="center">
+  <a target="_blank" rel="noopener noreferrer"><img width="600" src="https://raw.githubusercontent.com/oraichain/cosmwasm-gitpod/master/docs/assets/choose-a-file.png" alt="Choose a project file"></a>
+</p>
 
-## Deploy to Vscode marketplace
+<h4 align="center">
+    An example of choosing a project file
+</h4>
 
-vsce publish --pat $AUTHORIZATION
-```
+- Then, please click **Build Cosmwasm** to build the smart contract.
 
-## Deploy to Eclipse Open VSX for Gitpod
+* Note: The extension provides four custom VS Code buttons: ```Build CosmWasm```,  ```Deploy CosmWasm```, ```Upload CosmWasm``` and ```Instantiate CosmWasm``` under the status bar of Vs Code and a ```CosmWasm IDE Explorer``` under the ```Explorer``` tab of VS Code.
 
-```sh
-ovsx publish --pat $AUTHORIZATION
+  - ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code.
+  - ```Deploy Cosmwasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
+  - ```Upload CosmWasm``` button will upload your smart contract code.
+  - ```Instantiate CosmWasm``` button will instantiate your smart contract given a code id.
+
+* Please note that the IDE will read all the json schemas of a project from the location **artifacts/schema** or **schema**. As a result, if the schemas are in a different location, the IDE will not be able to move to the next stage.
+
+- After finishing building, the CosmWasm IDE should move to a new page with basic information for contract deployment like in the image below.
+
+<p align="center">
+  <a target="_blank" rel="noopener noreferrer"><img width="300" src="https://raw.githubusercontent.com/oraichain/cosmwasm-gitpod/master/docs/assets/interact.png" alt="contract interaction"></a>
+</p>
+
+<h4 align="center">
+    Contract interaction with VsCode CosmWasm extension
+</h4>
+
+- After filling all the needed information, you can click **Deploy / Upload / Instantiate CosmWasm** to to deploy / upload / instantiate the contract.
+
+## 4. Interacting with the IDE webview
+
+After deploying or instantiating, the webview will display the deployed contract address & two interaction options: Execute & Query. You can freely play with it to suit your needs.
+
+<p align="center">
+  <a target="_blank" rel="noopener noreferrer"><img width="300" src="https://raw.githubusercontent.com/oraichain/cosmwasm-gitpod/master/docs/assets/interaction.png" alt="contract interaction"></a>
+</p>
 ```
