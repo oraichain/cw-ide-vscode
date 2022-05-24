@@ -53,12 +53,12 @@ You should navigate to the **Extensions** tab in the VS Code tab bar & install t
     An example of choosing a project file
 </h4>
 
-- Then, please click **Build Cosmwasm** to build the smart contract.
+- Then, please click **Build CosmWasm** to build the smart contract.
 
 * Note: The extension provides four custom VS Code buttons: ```Build CosmWasm```,  ```Deploy CosmWasm```, ```Upload CosmWasm``` and ```Instantiate CosmWasm``` under the status bar of Vs Code and a ```CosmWasm IDE Explorer``` under the ```Explorer``` tab of VS Code.
 
   - ```Build CosmWasm``` button will build the smart contract to the .wasm file based on the file you open in VS Code.
-  - ```Deploy Cosmwasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
+  - ```Deploy CosmWasm``` button will deploy your contract onto a network that you choose on the CosmWasm IDE explorer.
   - ```Upload CosmWasm``` button will upload your smart contract code.
   - ```Instantiate CosmWasm``` button will instantiate your smart contract given a code id.
 
