@@ -59,7 +59,7 @@ You should navigate to the **Extensions** tab in the VS Code tab bar & install t
 
 Since you are developing locally, you need a wallet to deploy & interact with the contract. Hence, you need to create a **.env** file under the workspace root, and insert your test wallet mnemonic. 
 
-Next, you can choose a file in the src/ directory of your contract then click **Build CosmWasm**. The CosmWasm IDE webview should update its UI, which moves to a new screen so that you can type neccessary inputs to deploy the contract.
+Next, you can choose a file in the src/ directory of your contract then click **Build CosmWasm**. Building a contract the first time will take quite a bit, so please wait for it to finish building. The CosmWasm IDE webview should update its UI, which moves to a new screen so that you can type neccessary inputs to deploy the contract.
 
 Finally, you can click **Upload/Instantiate/Deploy CosmWasm**.
 
