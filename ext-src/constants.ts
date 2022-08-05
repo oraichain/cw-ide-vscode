@@ -3,8 +3,10 @@ const constants = {
     DEPLOY: "deploy",
     UPLOAD: "upload",
     INSTANTIATE: "instantiate",
-    // DEV_MODE: "dev-mode",
-    INIT_SCHEMA: "init_msg",
+    INIT_SCHEMA: {
+        OLD_VERSION: "init_msg",
+        NEW_VERSION: "instantiate_msg"
+    },
     HANDLE_SCHEMA: {
         OLD_VERSION: "handle_msg",
         NEW_VERSION: "execute_msg",

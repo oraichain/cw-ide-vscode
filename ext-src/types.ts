@@ -8,6 +8,11 @@ export interface RunButton {
   color: string;
 }
 
+export interface Version {
+  OLD_VERSION: string;
+  NEW_VERSION: string;
+};
+
 declare global {
   interface Window {
     keplr: any;
