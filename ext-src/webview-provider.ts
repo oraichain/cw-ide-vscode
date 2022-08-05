@@ -49,6 +49,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
         const initSchema = JSON.parse(
           fs.readFileSync(message.path).toString('ascii')
         );
+        console.log('init schema: ', initSchema);
         this.setActionWithPayload({
           action: constants.INIT_SCHEMA,
           payload: initSchema
@@ -74,11 +75,10 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async _getBaseHtml(cspSource: string, nonce: string) {
-
-    let iframePort = "3000";
+    let iframePort = '';
 
     try {
-      const workspacePath = vscode.workspace.workspaceFolders === undefined ? vscode.Uri.from({ scheme: '' }) : vscode.workspace.workspaceFolders[0].uri;
+      const workspacePath = vscode.workspace.workspaceFolders![0].uri;
       const envText = await vscode.workspace.fs.readFile(
         vscode.Uri.joinPath(workspacePath, '.env.development.webview')
       );
@@ -98,14 +98,15 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       base += `http://localhost:${port}/" />`;
     } else {
       base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app http://localhost:${iframePort};">`;
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app http://localhost:${iframePort ? iframePort : 3000
+        };">`;
     }
 
     return { cssList: base, iframePort };
   }
 
   private async _getHtmlForWebview(webview: vscode.Webview) {
-    let iframeSrc = "https://cw-ide-webview.web.app";
+    let iframeSrc = 'https://cw-ide-webview.web.app';
 
     // fixed development
     const entrypoints = this._isDev
@@ -121,7 +122,10 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
     let jsList = '';
     // get localhost:port from env if development
-    let { cssList, iframePort } = await this._getBaseHtml(webview.cspSource, nonce);
+    let { cssList, iframePort } = await this._getBaseHtml(
+      webview.cspSource,
+      nonce
+    );
     if (iframePort) iframeSrc = `http://localhost:${iframePort}`;
 
     for (const entrypoint of entrypoints) {
