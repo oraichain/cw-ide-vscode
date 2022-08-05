@@ -2,38 +2,32 @@
 {
     "version": "0.1.0",
     "configurations": [
-    {
-        "args": [
-            "--extensionDevelopmentPath=${workspaceFolder}"
-        ],
-        "name": "Launch Extension",
-        "outFiles": [
-            "${workspaceFolder}/out/**/*.js"
-        ],
-        "preLaunchTask": "npm",
-        "request": "launch",
-        "type": "pwa-extensionHost"
-    },
-    
         {
             "name": "Launch Extension",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
-            "stopOnEntry": false,
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/src/**/*.js" ],
+            "outFiles": [
+                "${workspaceRoot}/out/src/**/*.js"
+            ],
         },
         {
             "name": "Launch Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
-            "stopOnEntry": false,
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test"
+            ],
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
         },
     ]
 }

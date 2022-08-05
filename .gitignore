@@ -6,3 +6,4 @@ build
 .env.production
 .env
 *.txt
+logs
