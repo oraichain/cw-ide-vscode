@@ -55,19 +55,19 @@ const init = async (
   const rootPath = vscode.workspace.workspaceFolders[0].uri;
 
   // not a cargo project
-  if (os.type().includes("Windows")) {
-    if (
-      !fs.existsSync(
-        `${rootPath.path}/Cargo.toml`
-          ?.toString()
-          ?.replace(/\//g, "\\")
-          ?.substring(1)
-      )
-    )
-      return;
-  } else {
-    if (!fs.existsSync(`${rootPath.path}/Cargo.toml`)) return;
-  }
+  // if (os.type().includes("Windows")) {
+  //   if (
+  //     !fs.existsSync(
+  //       `${rootPath.path}/Cargo.toml`
+  //         ?.toString()
+  //         ?.replace(/\//g, "\\")
+  //         ?.substring(1)
+  //     )
+  //   )
+  //     return;
+  // } else {
+  //   if (!fs.existsSync(`${rootPath.path}/Cargo.toml`)) return;
+  // }
 
   // const configuration = vscode.workspace.getConfiguration('cosmwasm');
 
