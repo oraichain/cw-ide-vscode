@@ -87,19 +87,19 @@ const init = async (
       },
       {
         id: constants.DEPLOY,
-        name: "$(vm) Deploy CosmWasm",
+        name: "$(pass) Deploy CosmWasm",
         color: "#ffffff",
         singleInstance: true,
       },
       {
         id: constants.UPLOAD,
-        name: "$(vm) Upload CosmWasm",
+        name: "$(file-add) Upload CosmWasm",
         color: "#ffffff",
         singleInstance: true,
       },
       {
         id: constants.INSTANTIATE,
-        name: "$(vm) Instantiate CosmWasm",
+        name: "$(symbol-event) Instantiate CosmWasm",
         color: "#ffffff",
         singleInstance: true,
       },
