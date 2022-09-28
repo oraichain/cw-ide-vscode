@@ -30,6 +30,14 @@ The CosmWasm IDE Explorer helps you modify the destination network that you want
 
 ## Development
 
+Run and debug the extension in your local, please refer to the following guides:
+
+- [Run locally](.docs/development.md)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
 ## Deploy to Vscode marketplace
 
 vsce publish --pat $AUTHORIZATION
