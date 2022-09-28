@@ -3,7 +3,7 @@
   "displayName": "CosmWasm IDE",
   "description": "CosmWasm IDE for developers to build & optimize CosmWasm smart contracts",
   "icon": "logo-128.png",
-  "version": "0.13.57",
+  "version": "0.13.58",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",

@@ -1,6 +1,6 @@
 # Contributing
 
-Welcome to the VS Code CosmWasm Extension repository. If you are reading this, we assume that you are interested in contributing to this awesome project, and you are looking for a way to contribute.
+Welcome to the VS Code CosmWasm Extension repository. Great that you are here and you want to contribute to this repo
 
 Below are some important resources relating to the project:
 
