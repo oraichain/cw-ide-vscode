@@ -146,7 +146,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
 <body>                  
     <div id="root"></div>                            
     ${jsList}
-    <iframe allow="clipboard-read; clipboard-write" id="ide" src=${iframeSrc} frameBorder="0" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; visibility: visible" />
+    <iframe id="ide" src=${iframeSrc} frameBorder="0" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; visibility: visible" />
 </body>
 </html>`;
   }
