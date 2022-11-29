@@ -1,20 +1,26 @@
 #!/bin/bash
-command -v shellcheck >/dev/null && shellcheck "$0"
 
-echo "Info: sccache stats before build"
-sccache -s
-if [ $? -eq 0 ]; then
-    export RUSTC_WRAPPER=sccache
+if [ ! -z `command -v sccache` ]
+then
+    echo "Info: sccache stats before build"
+    sccache -s
+    if [ $? -eq 0 ]; then
+        export RUSTC_WRAPPER=sccache
+    fi
+else 
+    echo "Run: 'cargo install sccache' for faster build"
 fi
+
 set -o errexit -o nounset -o pipefail
 
-contractdir=$(realpath "$1")
+contractdir="$1"
 
 basedir=$(pwd)
+
+
 build_release="${3:-true}"
 # name is extract from Cargo.toml
 name=$(basename "$contractdir")
-
 build_name=$(grep -o 'name *=.*' $contractdir/Cargo.toml | awk -F'[="]' '{print $3}')
 build_name=${build_name//-/_}
 cd "$contractdir"
@@ -27,7 +33,7 @@ echo "Building contract in $contractdir"
 mkdir -p artifacts
 
 if [ "$build_release" == 'true' ]; then
-    RUSTFLAGS='-C link-arg=-s' $CARGO build -q --release --target-dir "$basedir/target" --target wasm32-unknown-unknown
+    RUSTFLAGS='-C link-arg=-s' $CARGO build -q --release --lib --target-dir "$basedir/target" --target wasm32-unknown-unknown
     # wasm-optimize on all results
     echo "Optimizing $name.wasm"
     if [ ! `which wasm-opt` ] 
@@ -51,7 +57,7 @@ build_schema="${2:-true}"
 if [ "$build_schema" == 'true' ]; then
     echo "Creating schema in $contractdir"
     (
-        cargo run -q --example schema --target-dir "$basedir/target"
+        cargo run -q --bin schema --target-dir "$basedir/target"
     )
 fi
 

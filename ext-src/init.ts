@@ -212,7 +212,9 @@ const init = async (
                 );
               }
 
-              if (id !== constants.BUILD) checkWasmFileExist(wasmFile);
+              if (id !== constants.BUILD) {
+                checkWasmFileExist(wasmFile);
+              }
 
               if (id === constants.BUILD) {
                 const actionCommand = interpolateString(command, vars);
@@ -221,15 +223,14 @@ const init = async (
                   actionCommand,
                   { cwd: vars.cwd },
                   async (error, stdout, stderr) => {
+                    const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true) || null;
                     if (error) return errorMessage(stderr);
                     // send post wasm body when build & schema file path
-                    const schemaFile = await readFiles(getSchemaPath(packagePath), constants.INIT_SCHEMA);
-                    const migrateSchemaFile = await readFiles(packagePath, constants.MIGRATE_SCHEMA, true) || null;
+                    // const migrateSchemaFile = await readFiles(packagePath, constants.MIGRATE_SCHEMA, true) || null;
                     provider.setActionWithPayload({
                       action: id,
                       payload: null,
                       schemaFile,
-                      migrateSchemaFile,
                       mnemonic
                     });
                     infoMessage("Your contract has been successfully built!");
@@ -237,66 +238,26 @@ const init = async (
                 );
               } else {
                 const wasmBody = fs.readFileSync(wasmFile).toString("base64");
-                const schemaPath = getSchemaPath(packagePath);
-                console.log("schema path: ", schemaPath)
 
                 if (id === constants.DEPLOY) {
                   //Deploy & execute case, no need to use command since already have all the wasm & schema file.
-
-                  let handleFile = await readFiles(
-                    schemaPath,
-                    constants.HANDLE_SCHEMA
-                  );
-                  let queryFile = await readFiles(
-                    schemaPath,
-                    constants.QUERY_SCHEMA
-                  );
-
-                  // special case, the contract can still run without the migrate schema file
-                  let migrateFile = await readFiles(
-                    schemaPath,
-                    constants.MIGRATE_SCHEMA, true
-                  );
-
                   // get handle & query json schema
+                  const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true);
                   provider.setActionWithPayload({
                     action: id,
                     payload: wasmBody,
-                    mnemonic,
-                    handleFile,
-                    queryFile,
-                    migrateFile,
+                    schemaFile,
+                    mnemonic
                   });
                 } else if (id === constants.UPLOAD) {
-                  const schemaFile = await readFiles(schemaPath, constants.INIT_SCHEMA);
+                  const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true);
                   provider.setActionWithPayload({
                     action: id,
                     payload: wasmBody,
                     mnemonic,
                     schemaFile,
                   });
-                } else if (id === constants.INSTANTIATE) {
-                  let handleFile = await readFiles(
-                    schemaPath,
-                    constants.HANDLE_SCHEMA
-                  );
-                  let queryFile = await readFiles(
-                    schemaPath,
-                    constants.QUERY_SCHEMA
-                  );
-                  let migrateFile = await readFiles(
-                    schemaPath,
-                    constants.MIGRATE_SCHEMA, true
-                  );
-
-                  provider.setActionWithPayload({
-                    action: id,
-                    mnemonic,
-                    handleFile,
-                    queryFile,
-                    migrateFile,
-                  });
-                }
+                } 
               }
             } catch (error) {
               return errorMessage(error.toString());
@@ -370,26 +331,24 @@ function checkWasmFileExist(wasmPath: string): void {
  * @param fileName - the file name that we want to read the content
  * @returns - a promise which includes the content of the file
  */
-function readFiles(dirname: string, fileName: Version | string, resolveIfEmpty?: boolean): Promise<any> {
+function readFiles(dirname: string, fileName: string, resolveIfEmpty?: boolean): Promise<any> {
   return new Promise((resolve, reject) => {
-    fs.readdir(dirname, function (err, filenames) {
+    fs.readdir(dirname, function (err, files) {
       if (err) {
         reject(err);
       }
-      filenames.forEach(function (filename, i, array) {
+      files.forEach(function (file, i, array) {
         if (
-          filename.includes(fileName as string) ||
-          filename.includes((fileName as Version).OLD_VERSION) ||
-          filename.includes((fileName as Version).NEW_VERSION)
+          file.includes(fileName as string)
         ) {
           const buffer = fs.readFileSync(
-            path.join(dirname, filename),
+            path.join(dirname, file),
             "utf-8");
           resolve(buffer);
         } else {
           if (i === array.length - 1) {
             if (resolveIfEmpty) resolve(null);
-            reject(`Cannot find ${(fileName as Version).OLD_VERSION ? `${(fileName as Version).OLD_VERSION}.json & ${(fileName as Version).NEW_VERSION}` : fileName}.json schema file in ${dirname}`)
+            reject(`Cannot find ${fileName}.json schema file in ${dirname}`)
           }
         }
       });
