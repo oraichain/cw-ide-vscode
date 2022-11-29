@@ -333,18 +333,16 @@ function checkWasmFileExist(wasmPath: string): void {
  */
 function readFiles(dirname: string, fileName: string, resolveIfEmpty?: boolean): Promise<any> {
   return new Promise((resolve, reject) => {
-    fs.readdir(dirname, function (err, filenames) {
+    fs.readdir(dirname, function (err, files) {
       if (err) {
         reject(err);
       }
-      filenames.forEach(function (filename, i, array) {
+      files.forEach(function (file, i, array) {
         if (
-          filename.includes(fileName as string)
-          // filename.includes((fileName as Version).OLD_VERSION) ||
-          // filename.includes((fileName as Version).NEW_VERSION)
+          file.includes(fileName as string)
         ) {
           const buffer = fs.readFileSync(
-            path.join(dirname, filename),
+            path.join(dirname, file),
             "utf-8");
           resolve(buffer);
         } else {
