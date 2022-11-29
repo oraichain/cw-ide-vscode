@@ -215,7 +215,6 @@ const init = async (
               if (id !== constants.BUILD) {
                 checkWasmFileExist(wasmFile);
               }
-              const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}/schema/${path.basename(packagePath)}`, true);
 
               if (id === constants.BUILD) {
                 const actionCommand = interpolateString(command, vars);
@@ -224,6 +223,7 @@ const init = async (
                   actionCommand,
                   { cwd: vars.cwd },
                   async (error, stdout, stderr) => {
+                    const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true) || null;
                     if (error) return errorMessage(stderr);
                     // send post wasm body when build & schema file path
                     // const migrateSchemaFile = await readFiles(packagePath, constants.MIGRATE_SCHEMA, true) || null;
@@ -242,6 +242,7 @@ const init = async (
                 if (id === constants.DEPLOY) {
                   //Deploy & execute case, no need to use command since already have all the wasm & schema file.
                   // get handle & query json schema
+                  const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true);
                   provider.setActionWithPayload({
                     action: id,
                     payload: wasmBody,
@@ -249,6 +250,7 @@ const init = async (
                     mnemonic
                   });
                 } else if (id === constants.UPLOAD) {
+                  const schemaFile = await readFiles(getSchemaPath(packagePath), `${packagePath}`, true);
                   provider.setActionWithPayload({
                     action: id,
                     payload: wasmBody,
