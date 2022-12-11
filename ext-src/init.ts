@@ -212,10 +212,6 @@ const init = async (
                 );
               }
 
-              if (id !== constants.BUILD) {
-                checkWasmFileExist(wasmFile);
-              }
-
               if (id === constants.BUILD) {
                 const actionCommand = interpolateString(command, vars);
                 infoMessage("Your contract is being built ...");
@@ -223,41 +219,32 @@ const init = async (
                   actionCommand,
                   { cwd: vars.cwd },
                   async (error, stdout, stderr) => {
-                    const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`) ;
-                    if (error) return errorMessage(stderr);
-                    // send post wasm body when build & schema file path
-                    // const migrateSchemaFile = await readFiles(packagePath, constants.MIGRATE_SCHEMA, true) || null;
+                    if (error) {
+                      errorMessage(error.toString());
+                      return;
+                    }
+                    infoMessage("Your contract has been successfully built!");
+
+                    // has to read the schema file here because we are using exec async
+                    const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`);
                     provider.setActionWithPayload({
                       action: id,
-                      payload: null,
+                      payload: '',
                       schemaFile,
                       mnemonic
                     });
-                    infoMessage("Your contract has been successfully built!");
                   }
                 );
               } else {
-                const wasmBody = fs.readFileSync(wasmFile).toString("base64");
-
-                if (id === constants.DEPLOY) {
-                  //Deploy & execute case, no need to use command since already have all the wasm & schema file.
-                  // get handle & query json schema
-                  const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`) ;
-                  provider.setActionWithPayload({
-                    action: id,
-                    payload: wasmBody,
-                    schemaFile,
-                    mnemonic
-                  });
-                } else if (id === constants.UPLOAD) {
-                  const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`) ;
-                  provider.setActionWithPayload({
-                    action: id,
-                    payload: wasmBody,
-                    mnemonic,
-                    schemaFile,
-                  });
-                } 
+                const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`);
+                checkWasmFileExist(wasmFile);
+                const wasmBody = fs.readFileSync(wasmFile).toString("base64")
+                provider.setActionWithPayload({
+                  action: id,
+                  payload: wasmBody,
+                  schemaFile,
+                  mnemonic
+                });
               }
             } catch (error) {
               return errorMessage(error.toString());
