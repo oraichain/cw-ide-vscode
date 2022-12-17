@@ -12,7 +12,9 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
   private _buildPath: vscode.Uri;
   private _isDev: boolean;
   private _view?: vscode.WebviewView;
+  private context: vscode.ExtensionContext;
   constructor(context: vscode.ExtensionContext) {
+    this.context = context;
     this._isDev = context.extensionMode === vscode.ExtensionMode.Development;
     this._buildPath = vscode.Uri.joinPath(context.extensionUri, 'build');
   }
@@ -98,7 +100,7 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
       base += `http://localhost:${port}/" />`;
     } else {
       base += `${this._buildPath.with({ scheme: 'vscode-resource' })}/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src * data: blob: 'unsafe-inline'; style-src * data: blob: 'unsafe-inline'; img-src * data:; font-src * data: blob: 'unsafe-inline'; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app http://localhost:${iframePort ? iframePort : 3000
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource} data: blob: 'unsafe-inline'; img-src ${cspSource}; font-src ${cspSource}; script-src 'nonce-${nonce}'; frame-src https://cw-ide-webview.web.app http://localhost:${iframePort ? iframePort : 3000
         };">`;
     }
 
@@ -116,7 +118,14 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
         './static/js/main.chunk.js'
       ]
       : (require(path.join(this._buildPath.path, 'asset-manifest.json'))
-        .entrypoints as string[]);
+        .entrypoints);
+
+    /*
+      with new version of vscode, need to manually change to webview uri:
+      ref: https://code.visualstudio.com/api/extension-guides/webview#controlling-access-to-local-resources
+           https://github.com/microsoft/vscode/issues/166003
+     */
+    let entryPointsUris = entrypoints.map(entry => webview.asWebviewUri(vscode.Uri.file(path.join(this.context.extensionPath, "build", `${entry}`))));
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = this._isDev ? '' : crypto.randomBytes(16).toString('base64');
@@ -128,10 +137,10 @@ export class CosmWasmViewProvider implements vscode.WebviewViewProvider {
     );
     if (iframePort) iframeSrc = `http://localhost:${iframePort}`;
 
-    for (const entrypoint of entrypoints) {
-      if (entrypoint.endsWith('.css')) {
+    for (const entrypoint of entryPointsUris) {
+      if ((entrypoint.path as string).endsWith('.css')) {
         cssList += `<link rel="stylesheet" type="text/css" href="${entrypoint}">`;
-      } else if (entrypoint.endsWith('.js')) {
+      } else if ((entrypoint.path as string).endsWith('.js')) {
         jsList += `<script nonce="${nonce}" src="${entrypoint}"></script>`;
       }
     }
