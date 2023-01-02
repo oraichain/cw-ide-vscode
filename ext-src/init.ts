@@ -7,6 +7,7 @@ import constants from "./constants";
 import * as cp from "child_process";
 import * as os from "os";
 import _ from "lodash";
+import * as toml from 'toml';
 
 const getPackagePath = (relativeFile: string): string => {
   let packagePath = path.dirname(relativeFile);
@@ -17,19 +18,20 @@ const getPackagePath = (relativeFile: string): string => {
   return packagePath;
 };
 
+const getTomlFile = (relativeFile: string): string => {
+  return `${getPackagePath(relativeFile)}/Cargo.toml`;
+}
+
 export const getWasmFile = (packagePath: string): string => {
   return `${packagePath}/artifacts/${path.basename(packagePath)}.wasm`;
 };
 
 export const getSchemaPath = (packagePath: string): string => {
   const firstSchemaPath = `${packagePath}/artifacts/schema`;
-  const secSchemaPath = `${packagePath}/schema`;
-  const schemaPath = fs.existsSync(firstSchemaPath)
-    ? firstSchemaPath
-    : fs.existsSync(secSchemaPath) ? secSchemaPath : null;
+  const isExist = fs.existsSync(firstSchemaPath);
 
-  if (schemaPath) return schemaPath;
-  throw `Cannot file contract schema path from ${firstSchemaPath} and ${secSchemaPath}. We currently support reading schema files from these two directories. Please modify your code to generate schema files to either ${firstSchemaPath} or ${secSchemaPath}`;
+  if (isExist) return firstSchemaPath;
+  throw `Cannot file contract schema path in ${firstSchemaPath}`;
 };
 
 const disposables: any[] = [];
@@ -127,6 +129,7 @@ const init = async (
               : '';
             const packagePath = getPackagePath(file);
             const wasmFile = getWasmFile(packagePath);
+            const tomlFile = getTomlFile(file);
 
             const vars = {
               // - the path of the folder opened in VS Code
@@ -212,6 +215,9 @@ const init = async (
                 );
               }
 
+              const config = toml.parse(fs.readFileSync(tomlFile, 'utf-8'));
+              const schemaName = config.package.name;
+
               if (id === constants.BUILD) {
                 const actionCommand = interpolateString(command, vars);
                 infoMessage("Your contract is being built ...");
@@ -226,7 +232,7 @@ const init = async (
                     infoMessage("Your contract has been successfully built!");
 
                     // has to read the schema file here because we are using exec async
-                    const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`);
+                    const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), schemaName);
                     provider.setActionWithPayload({
                       action: id,
                       payload: '',
@@ -236,7 +242,7 @@ const init = async (
                   }
                 );
               } else {
-                const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), `${path.basename(packagePath)}`);
+                const schemaFile = await readFiles(getSchemaPath(`${packagePath}`), schemaName);
                 checkWasmFileExist(wasmFile);
                 const wasmBody = fs.readFileSync(wasmFile).toString("base64")
                 provider.setActionWithPayload({

@@ -16,8 +16,6 @@ set -o errexit -o nounset -o pipefail
 contractdir="$1"
 
 basedir=$(pwd)
-
-
 build_release="${3:-true}"
 # name is extract from Cargo.toml
 name=$(basename "$contractdir")
@@ -57,11 +55,9 @@ build_schema="${2:-true}"
 if [ "$build_schema" == 'true' ]; then
     echo "Creating schema in $contractdir"
     (
+        cd artifacts
         cargo run -q --bin schema --target-dir "$basedir/target"
     )
 fi
-
-# show content
-du -h "artifacts/$name.wasm"
 
 echo "done"
