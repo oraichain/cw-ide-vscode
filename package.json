@@ -3,7 +3,7 @@
   "displayName": "CosmWasm IDE",
   "description": "CosmWasm IDE for developers to build & optimize CosmWasm smart contracts",
   "icon": "logo-128.png",
-  "version": "0.13.63",
+  "version": "0.13.64",
   "publisher": "oraichain",
   "homepage": "https://cw-ide-webview.web.app",
   "license": "MIT OR Apache-2.0",
@@ -63,17 +63,15 @@
     "@types/react-dom": "^17.0.9",
     "@types/shelljs": "^0.8.9",
     "@types/vscode": "^1.53.0",
-    "axios": "^0.23.0",
     "mocha": "^9.1.0",
     "react-scripts": "^4.0.3",
-    "secretjs": "^0.16.7",
-    "toml": "^3.0.0",
     "typescript": "^4.3.5"
   },
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-json-view": "^1.21.3"
+    "react-json-view": "^1.21.3",
+    "toml": "^3.0.0"
   },
   "eslintConfig": {
     "extends": [

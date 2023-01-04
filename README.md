@@ -42,14 +42,20 @@ Please refer to the official CosmWasm IDE documentation which includes all repos
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
+## Build to VS Code Extension
+
+```bash
+vsce package
+```
+
 ## Deploy to Vscode marketplace
+```bash
+
+## Deploy to VS Code Extension Marketplac
 
 vsce publish --pat $AUTHORIZATION
 
-````
-
 ## Deploy to Eclipse Open VSX for Gitpod
 
-```sh
 ovsx publish --pat $AUTHORIZATION
-````
+```
